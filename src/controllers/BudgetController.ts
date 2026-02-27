@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import Budget from "../models/Budget";
 
 export class BudgetController {
   static getAll = async (req: Request, res: Response) => {
@@ -6,7 +7,15 @@ export class BudgetController {
   };
 
   static create = async (req: Request, res: Response) => {
-    res.status(201).json({ message: "Create a new budget entry" });
+    try {
+      const budget = new Budget(req.body);
+      await budget.save();
+      res
+        .status(201)
+        .json({ message: "Budget entry created successfully", budget });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching budget entries", error });
+    }
   };
 
   static getById = async (req: Request, res: Response) => {
