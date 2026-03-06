@@ -26,8 +26,16 @@ export class BudgetController {
   };
 
   static getById = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    res.status(200).json({ message: `Get budget entry with ID: ${id}` });
+    try {
+      const { id } = req.params;
+      const budget = await Budget.findByPk(id.toString());
+      if (!budget) {
+        return res.status(404).json({ message: "Budget entry not found" });
+      }
+      res.status(200).json(budget);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching budget entry", error });
+    }
   };
 
   static update = async (req: Request, res: Response) => {
