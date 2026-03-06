@@ -3,7 +3,14 @@ import Budget from "../models/Budget";
 
 export class BudgetController {
   static getAll = async (req: Request, res: Response) => {
-    res.status(200).json({ message: "Get all budget entries" });
+    try {
+      const budgets = await Budget.findAll({
+        order: [["createdAt", "DESC"]],
+      });
+      res.status(200).json(budgets);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching budget entries", error });
+    }
   };
 
   static create = async (req: Request, res: Response) => {
