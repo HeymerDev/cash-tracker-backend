@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body, param } from "express-validator";
 import { BudgetController } from "../controllers/BudgetController";
 import { handleInputErrors } from "../middlewares/validation";
+import { validateBudgetId } from "../middlewares/Budget";
 
 const router: Router = Router();
 
@@ -22,13 +23,13 @@ router.post(
 );
 router.get(
   "/:id",
-  param("id").isInt({ gt: 0 }).withMessage("Invalid ID format"),
+  validateBudgetId,
   handleInputErrors,
   BudgetController.getById,
 );
 router.patch(
   "/:id",
-  param("id").isInt({ gt: 0 }).withMessage("Invalid ID format"),
+  validateBudgetId,
   body("name")
     .isString()
     .withMessage("Name must be a string")
@@ -48,7 +49,7 @@ router.patch(
 );
 router.delete(
   "/:id",
-  param("id").isInt({ gt: 0 }).withMessage("Invalid ID format"),
+  validateBudgetId,
   handleInputErrors,
   BudgetController.delete,
 );
