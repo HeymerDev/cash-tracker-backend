@@ -53,7 +53,16 @@ export class BudgetController {
   };
 
   static delete = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    res.status(200).json({ message: `Delete budget entry with ID: ${id}` });
+    try {
+      const { id } = req.params;
+      const budget = await Budget.findByPk(id.toString());
+      if (!budget) {
+        return res.status(404).json({ message: "Budget entry not found" });
+      }
+      await budget.destroy();
+      res.status(200).json({ message: "Budget entry deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting budget entry", error });
+    }
   };
 }
