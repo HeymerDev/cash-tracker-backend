@@ -1,5 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { body, param } from "express-validator";
+import Budget from "../models/Budget";
+
+declare global {
+  namespace Express {
+    interface Request {
+      budget?: Budget;
+    }
+  }
+}
 
 export const validateBudgetId = async (
   req: Request,
@@ -30,4 +39,23 @@ export const validationBody = async (
       .withMessage("Amount must be a positive number")
       .run(req),
     next());
+};
+
+export const validateBudgetExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+    const budget = await Budget.findByPk(id.toString());
+    if (!budget) {
+      return res.status(404).json({ message: "Budget entry not found" });
+    }
+    req.budget = budget;
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching budget entry", error });
+  }
+
+  next();
 };

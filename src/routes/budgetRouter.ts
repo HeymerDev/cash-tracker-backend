@@ -2,7 +2,11 @@ import { Router } from "express";
 import { body, param } from "express-validator";
 import { BudgetController } from "../controllers/BudgetController";
 import { handleInputErrors } from "../middlewares/validation";
-import { validateBudgetId, validationBody } from "../middlewares/Budget";
+import {
+  validateBudgetExists,
+  validateBudgetId,
+  validationBody,
+} from "../middlewares/budget";
 
 const router: Router = Router();
 
@@ -11,12 +15,14 @@ router.post("/", validationBody, handleInputErrors, BudgetController.create);
 router.get(
   "/:id",
   validateBudgetId,
+  validateBudgetExists,
   handleInputErrors,
   BudgetController.getById,
 );
 router.patch(
   "/:id",
   validateBudgetId,
+  validateBudgetExists,
   body("name")
     .isString()
     .withMessage("Name must be a string")
@@ -37,6 +43,7 @@ router.patch(
 router.delete(
   "/:id",
   validateBudgetId,
+  validateBudgetExists,
   handleInputErrors,
   BudgetController.delete,
 );

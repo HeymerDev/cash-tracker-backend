@@ -26,43 +26,19 @@ export class BudgetController {
   };
 
   static getById = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const budget = await Budget.findByPk(id.toString());
-      if (!budget) {
-        return res.status(404).json({ message: "Budget entry not found" });
-      }
-      res.status(200).json(budget);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching budget entry", error });
-    }
+    const { budget } = req;
+    res.status(200).json(budget);
   };
 
   static update = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const budget = await Budget.findByPk(id.toString());
-      if (!budget) {
-        return res.status(404).json({ message: "Budget entry not found" });
-      }
-      await budget.update(req.body);
-      res.status(200).json({ message: "Budget entry updated successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Error updating budget entry", error });
-    }
+    const { budget } = req;
+    await budget.update(req.body);
+    res.status(200).json({ message: "Budget entry updated successfully" });
   };
 
   static delete = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const budget = await Budget.findByPk(id.toString());
-      if (!budget) {
-        return res.status(404).json({ message: "Budget entry not found" });
-      }
-      await budget.destroy();
-      res.status(200).json({ message: "Budget entry deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Error deleting budget entry", error });
-    }
+    const { budget } = req;
+    await budget.destroy();
+    res.status(200).json({ message: "Budget entry deleted successfully" });
   };
 }
