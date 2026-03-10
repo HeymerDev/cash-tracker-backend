@@ -2,25 +2,12 @@ import { Router } from "express";
 import { body, param } from "express-validator";
 import { BudgetController } from "../controllers/BudgetController";
 import { handleInputErrors } from "../middlewares/validation";
-import { validateBudgetId } from "../middlewares/Budget";
+import { validateBudgetId, validationBody } from "../middlewares/Budget";
 
 const router: Router = Router();
 
 router.get("/", BudgetController.getAll);
-router.post(
-  "/",
-  body("name").notEmpty().withMessage("Name is required"),
-  body("amount")
-    .notEmpty()
-    .withMessage("Amount is required")
-    .isNumeric()
-    .withMessage("Amount must be a number")
-    .isFloat({ gt: 0 })
-    .withMessage("Amount must be a positive number"),
-
-  handleInputErrors,
-  BudgetController.create,
-);
+router.post("/", validationBody, handleInputErrors, BudgetController.create);
 router.get(
   "/:id",
   validateBudgetId,
