@@ -21,8 +21,14 @@ class Expense extends Model {
   })
   declare amount: number;
   @ForeignKey(() => Budget)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
   declare budgetId: number;
 
   @BelongsTo(() => Budget)
   declare budget: Budget;
 }
+
+export default Expense;
