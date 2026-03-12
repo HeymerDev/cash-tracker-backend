@@ -10,19 +10,14 @@ import {
 
 const router: Router = Router();
 
+router.param("budgetId", validateBudgetId);
+router.param("budgetId", validateBudgetExists);
+
 router.get("/", BudgetController.getAll);
 router.post("/", validationBody, handleInputErrors, BudgetController.create);
-router.get(
-  "/:id",
-  validateBudgetId,
-  validateBudgetExists,
-  handleInputErrors,
-  BudgetController.getById,
-);
+router.get("/:budgetId", BudgetController.getById);
 router.patch(
-  "/:id",
-  validateBudgetId,
-  validateBudgetExists,
+  "/:budgetId",
   body("name")
     .isString()
     .withMessage("Name must be a string")
@@ -40,12 +35,6 @@ router.patch(
   handleInputErrors,
   BudgetController.update,
 );
-router.delete(
-  "/:id",
-  validateBudgetId,
-  validateBudgetExists,
-  handleInputErrors,
-  BudgetController.delete,
-);
+router.delete("/:budgetId", BudgetController.delete);
 
 export default router;

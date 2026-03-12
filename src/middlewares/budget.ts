@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { body, param } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import Budget from "../models/Budget";
+import { handleInputErrors } from "./validation";
 
 declare global {
   namespace Express {
@@ -15,8 +16,17 @@ export const validateBudgetId = async (
   res: Response,
   next: NextFunction,
 ) => {
-  (await param("id").isInt({ gt: 0 }).withMessage("Invalid ID format").run(req),
-    next());
+  await param("budgetId")
+    .isInt({ gt: 0 })
+    .withMessage("Invalid ID format")
+    .run(req);
+
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  next();
 };
 
 export const validationBody = async (
@@ -47,8 +57,8 @@ export const validateBudgetExists = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.params;
-    const budget = await Budget.findByPk(id.toString());
+    const { budgetId } = req.params;
+    const budget = await Budget.findByPk(budgetId.toString());
     if (!budget) {
       return res.status(404).json({ message: "Budget entry not found" });
     }
