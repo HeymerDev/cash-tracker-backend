@@ -7,6 +7,7 @@ import {
   validateBudgetId,
   validationBody,
 } from "../middlewares/budget";
+import { ExpenseController } from "../controllers/ExpenseController";
 
 const router: Router = Router();
 
@@ -36,5 +37,13 @@ router.patch(
   BudgetController.update,
 );
 router.delete("/:budgetId", BudgetController.delete);
+
+//router for expenses
+
+router.get("/:budgetId/expenses", ExpenseController.getAll);
+router.post("/:budgetId/expenses", ExpenseController.create);
+router.get("/:budgetId/expenses/:expenseId", ExpenseController.getById);
+router.patch("/:budgetId/expenses/:expenseId", ExpenseController.update);
+router.delete("/:budgetId/expenses/:expenseId", ExpenseController.delete);
 
 export default router;
