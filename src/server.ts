@@ -24,6 +24,6 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
-app.use("/api/budget", budgetRouter);
+app.use("/api/budgets", budgetRouter);
 
 export default app;

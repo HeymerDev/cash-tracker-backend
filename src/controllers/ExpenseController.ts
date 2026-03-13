@@ -3,7 +3,9 @@ import { Request, Response } from "express";
 export class ExpenseController {
   static getAll = async (req: Request, res: Response) => {};
 
-  static create = async (req: Request, res: Response) => {};
+  static create = async (req: Request, res: Response) => {
+    console.log("desde create expense");
+  };
 
   static getById = async (req: Request, res: Response) => {
     const { budget } = req;
