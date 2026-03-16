@@ -30,5 +30,10 @@ export class ExpenseController {
     res.status(200).json({ message: "Expense entry updated successfully" });
   };
 
-  static delete = async (req: Request, res: Response) => {};
+  static delete = async (req: Request, res: Response) => {
+    const { expense } = req;
+
+    await expense.destroy();
+    res.status(200).json({ message: "Expense entry deleted successfully" });
+  };
 }
