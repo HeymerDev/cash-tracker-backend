@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { body } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 
 export const validationCreateExpense = async (
   req: Request,
@@ -21,4 +21,22 @@ export const validationCreateExpense = async (
       .withMessage("Amount must be a positive number")
       .run(req),
     next());
+};
+
+export const validateExpenseId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  await param("expenseId")
+    .isInt({ gt: 0 })
+    .withMessage("Invalid ID format")
+    .run(req);
+
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  next();
 };

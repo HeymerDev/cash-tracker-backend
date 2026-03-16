@@ -8,12 +8,17 @@ import {
   validationBody,
 } from "../middlewares/budget";
 import { ExpenseController } from "../controllers/ExpenseController";
-import { validationCreateExpense } from "../middlewares/expense";
+import {
+  validateExpenseId,
+  validationCreateExpense,
+} from "../middlewares/expense";
 
 const router: Router = Router();
 
 router.param("budgetId", validateBudgetId);
 router.param("budgetId", validateBudgetExists);
+
+router.param("expenseId", validateExpenseId);
 
 router.get("/", BudgetController.getAll);
 router.post("/", validationBody, handleInputErrors, BudgetController.create);
