@@ -20,8 +20,8 @@ export class ExpenseController {
   };
 
   static getById = async (req: Request, res: Response) => {
-    const { budget } = req;
-    res.status(200).json(budget);
+    const { expense } = req;
+    res.status(200).json(expense);
   };
 
   static update = async (req: Request, res: Response) => {};

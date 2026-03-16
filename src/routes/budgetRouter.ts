@@ -9,6 +9,7 @@ import {
 } from "../middlewares/budget";
 import { ExpenseController } from "../controllers/ExpenseController";
 import {
+  validateExpenseExists,
   validateExpenseId,
   validationCreateExpense,
 } from "../middlewares/expense";
@@ -19,6 +20,7 @@ router.param("budgetId", validateBudgetId);
 router.param("budgetId", validateBudgetExists);
 
 router.param("expenseId", validateExpenseId);
+router.param("expenseId", validateExpenseExists);
 
 router.get("/", BudgetController.getAll);
 router.post("/", validationBody, handleInputErrors, BudgetController.create);

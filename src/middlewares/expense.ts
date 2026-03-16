@@ -1,5 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { body, param, validationResult } from "express-validator";
+import Expense from "../models/Expense";
+
+declare global {
+  namespace Express {
+    interface Request {
+      expense?: Expense;
+    }
+  }
+}
 
 export const validationCreateExpense = async (
   req: Request,
@@ -36,6 +45,25 @@ export const validateExpenseId = async (
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
+  }
+
+  next();
+};
+
+export const validateExpenseExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { expenseId } = req.params;
+    const expense = await Expense.findByPk(expenseId.toString());
+    if (!expense) {
+      return res.status(404).json({ message: "Expense entry not found" });
+    }
+    req.expense = expense;
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching expense entry", error });
   }
 
   next();
