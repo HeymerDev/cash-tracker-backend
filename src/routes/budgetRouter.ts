@@ -56,7 +56,25 @@ router.post(
   ExpenseController.create,
 );
 router.get("/:budgetId/expenses/:expenseId", ExpenseController.getById);
-router.patch("/:budgetId/expenses/:expenseId", ExpenseController.update);
+router.patch(
+  "/:budgetId/expenses/:expenseId",
+  body("name")
+    .isString()
+    .withMessage("Name must be a string")
+    .optional()
+    .notEmpty()
+    .withMessage("Name cannot be empty"),
+  body("amount")
+    .optional()
+    .notEmpty()
+    .withMessage("Amount cannot be empty")
+    .isNumeric()
+    .withMessage("Amount must be a number")
+    .isFloat({ gt: 0 })
+    .withMessage("Amount must be a positive number"),
+  handleInputErrors,
+  ExpenseController.update,
+);
 router.delete("/:budgetId/expenses/:expenseId", ExpenseController.delete);
 
 export default router;
