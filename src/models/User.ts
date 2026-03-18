@@ -8,7 +8,7 @@ import {
   Unique,
   AllowNull,
 } from "sequelize-typescript";
-import Expense from "./Expense";
+import Budget from "./Budget";
 
 @Table({
   tableName: "users",
@@ -43,6 +43,9 @@ class User extends Model {
     type: DataType.BOOLEAN,
   })
   declare confirm: boolean;
+
+  @HasMany(() => Budget, { onDelete: "CASCADE", onUpdate: "CASCADE" })
+  declare budgets: Budget[];
 }
 
 export default User;
