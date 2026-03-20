@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import { hashPassword } from "../helpers/auth";
 import { generateToken } from "../helpers/token";
+import { AuthEmail } from "../Emails/AuthEmail";
 
 export class AuthController {
   static register = async (req: Request, res: Response) => {
@@ -19,6 +20,13 @@ export class AuthController {
       user.password = await hashPassword(password);
       user.token = generateToken();
       await user.save();
+
+      await AuthEmail.sendVerificationEmail({
+        email: user.email,
+        name: user.name,
+        token: user.token,
+      });
+
       res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
       //console.log(error);
