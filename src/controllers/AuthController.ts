@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import { hashPassword } from "../helpers/auth";
+import { generateToken } from "../helpers/token";
 
 export class AuthController {
   static register = async (req: Request, res: Response) => {
@@ -16,6 +17,7 @@ export class AuthController {
 
       const user = new User(req.body);
       user.password = await hashPassword(password);
+      user.token = generateToken();
       await user.save();
       res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
