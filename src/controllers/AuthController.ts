@@ -38,6 +38,21 @@ export class AuthController {
   static login = async (req: Request, res: Response) => {};
 
   static verifyEmail = async (req: Request, res: Response) => {
-    console.log("Desde verify email");
+    const { token } = req.body;
+
+    try {
+      const user = await User.findOne({ where: { token } });
+      if (!user) {
+        return res.status(404).json({ message: "Invalid token" });
+      }
+
+      user.confirm = true;
+      user.token = null;
+      await user.save();
+
+      res.status(200).json({ message: "Email verified successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error verifying email", error });
+    }
   };
 }
