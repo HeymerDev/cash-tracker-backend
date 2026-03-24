@@ -3,6 +3,7 @@ import User from "../models/User";
 import { hashPassword } from "../helpers/auth";
 import { generateToken } from "../helpers/token";
 import { AuthEmail } from "../Emails/AuthEmail";
+import { log } from "console";
 
 export class AuthController {
   static register = async (req: Request, res: Response) => {
@@ -35,4 +36,8 @@ export class AuthController {
   };
 
   static login = async (req: Request, res: Response) => {};
+
+  static verifyEmail = async (req: Request, res: Response) => {
+    console.log("Desde verify email");
+  };
 }

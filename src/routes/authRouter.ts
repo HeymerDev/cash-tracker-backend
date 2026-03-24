@@ -24,4 +24,15 @@ router.post(
 
 router.post("/login", AuthController.login);
 
+router.post(
+  "/verify-email",
+  body("token")
+    .notEmpty()
+    .withMessage("Token is required")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Token must be 6 characters long"),
+  handleInputErrors,
+  AuthController.verifyEmail,
+);
+
 export default router;
