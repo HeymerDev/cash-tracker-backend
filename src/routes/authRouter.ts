@@ -2,8 +2,11 @@ import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { body } from "express-validator";
 import { handleInputErrors } from "../middlewares/validation";
+import { limiter } from "../config/limiter";
 
 const router: Router = Router();
+
+router.use(limiter);
 
 router.post(
   "/register",
