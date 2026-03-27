@@ -1,22 +1,22 @@
 import { Request, Response } from "express";
 import User from "../models/User";
-import { hashPassword } from "../helpers/auth";
+import { comparePassword, hashPassword } from "../helpers/auth";
 import { generateToken } from "../helpers/token";
 import { AuthEmail } from "../Emails/AuthEmail";
-import { log } from "console";
+import { generateJWT } from "../helpers/jwt";
 
 export class AuthController {
   static register = async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    const userExists = await User.findOne({
+    const user = await User.findOne({
       where: { email },
     });
 
-    try {
-      if (userExists) {
-        return res.status(409).json({ message: "Email already in use" });
-      }
+    if (user) {
+      return res.status(409).json({ message: "Email already in use" });
+    }
 
+    try {
       const user = new User(req.body);
       user.password = await hashPassword(password);
       user.token = generateToken();
@@ -35,7 +35,33 @@ export class AuthController {
     }
   };
 
-  static login = async (req: Request, res: Response) => {};
+  static login = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    if (!user.confirm) {
+      return res.status(403).json({ message: "Please verify your email" });
+    }
+
+    try {
+      const isPasswordValid = await comparePassword(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const token = generateJWT(user.id);
+
+      res.status(200).json({ message: "Login successful", token });
+    } catch (error) {
+      res.status(500).json({ message: "Error logging in", error });
+    }
+  };
 
   static verifyEmail = async (req: Request, res: Response) => {
     const { token } = req.body;

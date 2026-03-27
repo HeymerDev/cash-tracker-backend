@@ -25,7 +25,13 @@ router.post(
   AuthController.register,
 );
 
-router.post("/login", AuthController.login);
+router.post(
+  "/login",
+  body("email").isEmail().withMessage("Please provide a valid email"),
+  body("password").notEmpty().withMessage("Password is required"),
+  handleInputErrors,
+  AuthController.login,
+);
 
 router.post(
   "/verify-email",
