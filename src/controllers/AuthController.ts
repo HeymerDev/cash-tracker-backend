@@ -81,4 +81,25 @@ export class AuthController {
       res.status(500).json({ message: "Error verifying email", error });
     }
   };
+
+  static forgotPassword = async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    try {
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      user.tokenPassword = generateToken();
+      await user.save();
+      await AuthEmail.sendForgotPasswordEmail({
+        email: user.email,
+        name: user.name,
+        token: user.tokenPassword,
+      });
+      res.status(200).json({ message: "Forgot password email sent" });
+    } catch (error) {
+      res.status(500).json({ message: "Error processing request", error });
+    }
+  };
 }

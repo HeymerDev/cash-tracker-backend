@@ -22,4 +22,19 @@ export class AuthEmail {
 
     console.log("Verification email sent: %s", email.messageId);
   }
+
+  static async sendForgotPasswordEmail(user: User) {
+    const email = await transporter.sendMail({
+      from: "Cash Tracker <heymermeza11@gmail.com>",
+      to: user.email,
+      subject: "Reset your password",
+      html: `
+              <h1>Welcome to Cash Tracker, ${user.name}!</h1>
+                <p>Please use the following token to reset your password:</p>
+                <h2>${user.token}</h2>
+                <p>This token will expire in 10 minutes.</p>
+          `,
+    });
+    console.log("Forgot password email sent: %s", email.messageId);
+  }
 }

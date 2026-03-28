@@ -38,6 +38,12 @@ class User extends Model {
   })
   declare token: string;
 
+  @Column({
+    type: DataType.STRING(6),
+    field: "token_password",
+  })
+  declare tokenPassword: string;
+
   @Default(false)
   @Column({
     type: DataType.BOOLEAN,

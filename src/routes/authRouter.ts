@@ -43,4 +43,14 @@ router.post(
   AuthController.verifyEmail,
 );
 
+router.post(
+  "/forgot-password",
+  body("email")
+    .isEmail()
+    .notEmpty()
+    .withMessage("Please provide a valid email"),
+  handleInputErrors,
+  AuthController.forgotPassword,
+);
+
 export default router;
