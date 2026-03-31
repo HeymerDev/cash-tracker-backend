@@ -113,4 +113,22 @@ export class AuthController {
 
     res.status(200).json({ message: "Token is valid" });
   };
+
+  static resetPassword = async (req: Request, res: Response) => {
+    const { password } = req.body;
+    const { token } = req.params;
+
+    const user = await User.findOne({ where: { tokenPassword: token } });
+
+    if (!user) {
+      return res.status(404).json({ message: "Invalid token" });
+    }
+
+    const passwordHash = await hashPassword(password);
+
+    user.password = passwordHash;
+    await user.save();
+
+    res.json({ message: "Password update succesfully" });
+  };
 }
