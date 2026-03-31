@@ -53,4 +53,14 @@ router.post(
   AuthController.forgotPassword,
 );
 
+router.post(
+  "/validate-reset-token",
+  body("token")
+    .notEmpty()
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Token is not valid"),
+  handleInputErrors,
+  AuthController.verifyResetToken,
+);
+
 export default router;

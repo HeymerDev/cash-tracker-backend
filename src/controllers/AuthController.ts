@@ -102,4 +102,15 @@ export class AuthController {
       res.status(500).json({ message: "Error processing request", error });
     }
   };
+
+  static verifyResetToken = async (req: Request, res: Response) => {
+    const { token } = req.body;
+    const tokenExist = await User.findOne({ where: { tokenPassword: token } });
+
+    if (!tokenExist) {
+      return res.status(404).json({ message: "Invalid token" });
+    }
+
+    res.status(200).json({ message: "Token is valid" });
+  };
 }
