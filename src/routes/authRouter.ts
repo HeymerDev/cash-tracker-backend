@@ -78,4 +78,6 @@ router.post(
   AuthController.resetPassword,
 );
 
+router.get("/user", AuthController.getUser);
+
 export default router;

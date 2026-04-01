@@ -3,7 +3,7 @@ import User from "../models/User";
 import { comparePassword, hashPassword } from "../helpers/auth";
 import { generateToken } from "../helpers/token";
 import { AuthEmail } from "../Emails/AuthEmail";
-import { generateJWT } from "../helpers/jwt";
+import { decodedToken, generateJWT } from "../helpers/jwt";
 
 export class AuthController {
   static register = async (req: Request, res: Response) => {
@@ -127,8 +127,38 @@ export class AuthController {
     const passwordHash = await hashPassword(password);
 
     user.password = passwordHash;
+    user.tokenPassword = null;
     await user.save();
 
     res.json({ message: "Password update succesfully" });
+  };
+
+  static getUser = async (req: Request, res: Response) => {
+    const bearer = req.headers.authorization;
+
+    if (!bearer) {
+      const error = new Error("Unauthorized");
+      return res.status(401).json({ message: error.message });
+    }
+
+    const [, token] = bearer.split(" ");
+
+    if (!token) {
+      const error = new Error("Unauthorized");
+      return res.status(401).json({ message: error.message });
+    }
+
+    try {
+      const decoded = decodedToken(token);
+      if (typeof decoded === "object" && decoded.userId) {
+        const user = await User.findByPk(decoded.userId, {
+          attributes: ["id", "name", "email"],
+        });
+
+        res.json(user);
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Unauthorized" });
+    }
   };
 }
