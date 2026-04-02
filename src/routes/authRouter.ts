@@ -64,4 +64,13 @@ router.post(
 
 router.get("/user", authenticate, AuthController.getUser);
 
+router.post(
+  "/update-password",
+  authenticate,
+  body("current_password").notEmpty().withMessage("Password is required"),
+  validatePasswordBody,
+  handleInputErrors,
+  AuthController.updatePassword,
+);
+
 export default router;
