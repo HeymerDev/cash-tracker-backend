@@ -3,7 +3,7 @@ import User from "../models/User";
 import { comparePassword, hashPassword } from "../helpers/auth";
 import { generateToken } from "../helpers/token";
 import { AuthEmail } from "../Emails/AuthEmail";
-import { decodedToken, generateJWT } from "../helpers/jwt";
+import { generateJWT } from "../helpers/jwt";
 
 export class AuthController {
   static register = async (req: Request, res: Response) => {
@@ -134,31 +134,6 @@ export class AuthController {
   };
 
   static getUser = async (req: Request, res: Response) => {
-    const bearer = req.headers.authorization;
-
-    if (!bearer) {
-      const error = new Error("Unauthorized");
-      return res.status(401).json({ message: error.message });
-    }
-
-    const [, token] = bearer.split(" ");
-
-    if (!token) {
-      const error = new Error("Unauthorized");
-      return res.status(401).json({ message: error.message });
-    }
-
-    try {
-      const decoded = decodedToken(token);
-      if (typeof decoded === "object" && decoded.userId) {
-        const user = await User.findByPk(decoded.userId, {
-          attributes: ["id", "name", "email"],
-        });
-
-        res.json(user);
-      }
-    } catch (error) {
-      res.status(500).json({ message: "Unauthorized" });
-    }
+    res.json(req.user);
   };
 }
