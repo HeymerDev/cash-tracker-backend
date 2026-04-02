@@ -1,6 +1,7 @@
 import { decodedToken } from "../helpers/jwt";
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User";
+import { body } from "express-validator";
 
 declare global {
   namespace Express {
@@ -41,4 +42,31 @@ export const authenticate = async (
   } catch (error) {
     return res.status(500).json({ message: "Unauthorized" });
   }
+};
+
+export const validatePasswordBody = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  (await body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .run(req),
+    next());
+};
+
+export const validateEmailBody = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  (await body("email")
+    .isEmail()
+    .notEmpty()
+    .withMessage("Please provide a valid email")
+    .run(req),
+    next());
 };

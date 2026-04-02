@@ -3,7 +3,11 @@ import { AuthController } from "../controllers/AuthController";
 import { body, param } from "express-validator";
 import { handleInputErrors } from "../middlewares/validation";
 import { limiter } from "../config/limiter";
-import { authenticate } from "../middlewares/auth";
+import {
+  authenticate,
+  validateEmailBody,
+  validatePasswordBody,
+} from "../middlewares/auth";
 
 const router: Router = Router();
 
@@ -11,24 +15,15 @@ router.use(limiter);
 
 router.post(
   "/register",
-  body("email")
-    .isEmail()
-    .withMessage("Please provide a valid email")
-    .notEmpty()
-    .withMessage("Email is required"),
-  body("password")
-    .notEmpty()
-    .withMessage("Password is required")
-    .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long"),
-  body("name").notEmpty().withMessage("Name is required"),
+  validateEmailBody,
+  validatePasswordBody,
   handleInputErrors,
   AuthController.register,
 );
 
 router.post(
   "/login",
-  body("email").isEmail().withMessage("Please provide a valid email"),
+  validateEmailBody,
   body("password").notEmpty().withMessage("Password is required"),
   handleInputErrors,
   AuthController.login,
@@ -46,10 +41,7 @@ router.post(
 
 router.post(
   "/forgot-password",
-  body("email")
-    .isEmail()
-    .notEmpty()
-    .withMessage("Please provide a valid email"),
+  validateEmailBody,
   handleInputErrors,
   AuthController.forgotPassword,
 );
@@ -66,11 +58,7 @@ router.post(
 
 router.post(
   "/reset-password/:token",
-  body("password")
-    .notEmpty()
-    .withMessage("Password is required")
-    .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long"),
+  validatePasswordBody,
   param("token")
     .notEmpty()
     .isLength({ min: 6, max: 6 })
