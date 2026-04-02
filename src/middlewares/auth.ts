@@ -70,3 +70,16 @@ export const validateEmailBody = async (
     .run(req),
     next());
 };
+
+export const validateTokenBody = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  (await body("token")
+    .notEmpty()
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Token is not valid")
+    .run(req),
+    next());
+};

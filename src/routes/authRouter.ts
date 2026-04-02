@@ -7,6 +7,7 @@ import {
   authenticate,
   validateEmailBody,
   validatePasswordBody,
+  validateTokenBody,
 } from "../middlewares/auth";
 
 const router: Router = Router();
@@ -31,10 +32,7 @@ router.post(
 
 router.post(
   "/verify-email",
-  body("token")
-    .notEmpty()
-    .isLength({ min: 6, max: 6 })
-    .withMessage("Token is not valid"),
+  validateTokenBody,
   handleInputErrors,
   AuthController.verifyEmail,
 );
@@ -48,10 +46,7 @@ router.post(
 
 router.post(
   "/validate-reset-token",
-  body("token")
-    .notEmpty()
-    .isLength({ min: 6, max: 6 })
-    .withMessage("Token is not valid"),
+  validateTokenBody,
   handleInputErrors,
   AuthController.verifyResetToken,
 );
