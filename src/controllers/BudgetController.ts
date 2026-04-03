@@ -7,6 +7,7 @@ export class BudgetController {
     try {
       const budgets = await Budget.findAll({
         order: [["createdAt", "DESC"]],
+        where: { userId: req.user.id },
       });
       res.status(200).json(budgets);
     } catch (error) {
