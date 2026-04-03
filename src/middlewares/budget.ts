@@ -69,3 +69,15 @@ export const validateBudgetExists = async (
 
   next();
 };
+
+export const hasAccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.budget.userId !== req.user.id) {
+    return res.status(403).json({ message: "Access denied" });
+  }
+
+  next();
+};
