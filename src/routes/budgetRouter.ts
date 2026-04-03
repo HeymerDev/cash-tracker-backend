@@ -13,8 +13,11 @@ import {
   validateExpenseId,
   validationCreateExpense,
 } from "../middlewares/expense";
+import { authenticate } from "../middlewares/auth";
 
 const router: Router = Router();
+
+router.use(authenticate);
 
 router.param("budgetId", validateBudgetId);
 router.param("budgetId", validateBudgetExists);
