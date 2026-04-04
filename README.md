@@ -1,154 +1,171 @@
-📦 API REST - Express + Sequelize + TypeScript
+Esta es una excelente estructura para un archivo `README.md` profesional. He organizado la información utilizando una jerarquía clara, resaltando las tecnologías y manteniendo el tono técnico y limpio que requiere un proyecto de **Node.js + TypeScript**.
 
-API REST construida con Express, Sequelize y TypeScript, que incluye autenticación con JWT, encriptación con bcrypt, validaciones con express-validator y envío de correos con Nodemailer.
+Aquí tienes el código en formato Markdown:
 
-🚀 Tecnologías utilizadas
-Node.js
-Express
-TypeScript
-Sequelize (ORM)
-JWT (JSON Web Tokens)
-bcrypt
-express-validator
-Nodemailer
-PNPM
-📁 Estructura del proyecto
+---
+
+````markdown
+# 📦 API REST - Express + Sequelize + TypeScript
+
+Una API REST robusta construida con **Express**, **Sequelize** y **TypeScript**. Este proyecto implementa estándares modernos de seguridad, incluyendo autenticación JWT, encriptación de datos, validaciones estrictas y un sistema de notificaciones por correo electrónico.
+
+---
+
+## 🚀 Tecnologías Utilizadas
+
+- **Entorno:** Node.js
+- **Framework:** Express
+- **Lenguaje:** TypeScript
+- **ORM:** Sequelize
+- **Seguridad:** \* JWT (JSON Web Tokens)
+  - bcrypt (Hashing de contraseñas)
+  - Rate Limiting
+- **Validación:** express-validator
+- **Productividad:** PNPM, Nodemailer
+
+---
+
+## 📁 Estructura del Proyecto
+
+```text
 src/
 │
-├── config/ # Configuraciones (DB, limiter, nodemailer)
-│ ├── db.ts
-│ ├── limiter.ts
-│ └── nodemailer.ts
+├── config/           # Configuraciones (DB, limiter, nodemailer)
+│   ├── db.ts
+│   ├── limiter.ts
+│   └── nodemailer.ts
 │
-├── controllers/ # Lógica de negocio
+├── controllers/      # Lógica de negocio (Controladores)
 │
-├── Emails/ # Manejo de correos
-│ └── AuthEmail.ts
+├── Emails/           # Plantillas y manejo de correos (AuthEmail.ts)
 │
-├── helpers/ # Funciones reutilizables
-│ ├── auth.ts
-│ ├── jwt.ts
-│ └── token.ts
+├── helpers/          # Funciones de utilidad (Auth, JWT, Tokens)
 │
-├── middlewares/ # Middlewares personalizados
-│ ├── auth.ts
-│ ├── budget.ts
-│ ├── expense.ts
-│ └── validations.ts
+├── middlewares/      # Middlewares (Auth, Validaciones, Entidades)
 │
-├── models/ # Modelos Sequelize
+├── models/           # Modelos de datos (Sequelize)
 │
-├── routes/ # Definición de rutas
-│ ├── authRouter.ts
-│ ├── budgetRouter.ts
-│ └── index.ts
+├── routes/           # Definición de Endpoints
+│   ├── authRouter.ts
+│   ├── budgetRouter.ts
+│   └── index.ts
 │
-├── index.ts # Punto de entrada
-│
-.env # Variables de entorno
-.gitignore
-⚙️ Configuración del entorno
+├── index.ts          # Punto de entrada de la aplicación
+└── .env              # Variables de entorno (no trackeado)
+```
+````
 
-Crea un archivo .env en la raíz del proyecto:
+---
 
+## ⚙️ Configuración del Entorno
+
+Crea un archivo `.env` en la raíz del proyecto y completa los siguientes campos:
+
+```env
 PORT=3000
 
+# Base de Datos
 DB_HOST=localhost
 DB_USER=tu_usuario
 DB_PASSWORD=tu_password
 DB_NAME=tu_base_de_datos
 
-JWT_SECRET=tu_secreto
+# Seguridad
+JWT_SECRET=tu_secreto_super_seguro
 
+# Nodemailer / Email Service
 EMAIL_HOST=smtp.example.com
 EMAIL_PORT=587
 EMAIL_USER=tu_email
 EMAIL_PASS=tu_password
-📦 Instalación
+```
 
-Instala las dependencias con pnpm:
+---
 
+## 📦 Instalación y Uso
+
+### 1. Instalación de dependencias
+
+Asegúrate de tener [PNPM](https://pnpm.io/) instalado:
+
+```bash
 pnpm install
-▶️ Ejecución del proyecto
-🔧 Modo desarrollo
+```
+
+### 2. Ejecución en Desarrollo
+
+Para iniciar el servidor con recarga automática:
+
+```bash
 pnpm run dev
-🔧 Modo desarrollo (API)
+```
+
+_Opcional (Modo API):_
+
+```bash
 pnpm run dev:api
+```
 
-Este modo permite ejecutar el servidor con una flag adicional --api (útil si manejas lógica condicional en tu app).
+### 3. Construcción y Producción
 
-🏗️ Build del proyecto
+Compila el código TypeScript a JavaScript:
+
+```bash
 pnpm run build
+```
 
-Esto compila el proyecto de TypeScript a JavaScript en la carpeta dist.
+Inicia el servidor en producción:
 
-🚀 Producción
+```bash
 pnpm start
+```
 
-Ejecuta el proyecto desde:
+---
 
-dist/index.js
-🔐 Autenticación
+## 🔐 Seguridad y Autenticación
 
-La API utiliza JWT para proteger rutas.
+### Flujo de Acceso
 
-📌 Uso del token
+1.  **Registro/Login:** Los datos son validados y la contraseña se encripta con `bcrypt`.
+2.  **JWT:** Tras el login exitoso, se genera un token firmado.
+3.  **Middleware:** Las rutas protegidas requieren el token en los headers.
 
-El cliente debe enviar el token en los headers:
+**Ejemplo de Header:**
 
-Authorization: Bearer TU_TOKEN
-🔄 Flujo de autenticación
-Usuario inicia sesión
-Se valida la contraseña con bcrypt
-Se genera un JWT
-Se accede a rutas protegidas mediante middleware
-🔑 Seguridad
-🔒 Contraseñas encriptadas con bcrypt
-🛡️ Validaciones con express-validator
-🔑 Autenticación con JWT
-🚫 Rate limiting (limiter.ts)
-🧱 Middlewares para protección de rutas
-📬 Sistema de correos
+> `Authorization: Bearer TU_TOKEN_AQUÍ`
 
-Se usa Nodemailer para:
+### Características de Seguridad
 
-Confirmación de cuenta
-Recuperación de contraseña
+- ✅ **Encriptación:** Passwords nunca se almacenan en texto plano.
+- ✅ **Rate Limiting:** Protección contra ataques de fuerza bruta.
+- ✅ **Validación:** Sanitización de datos de entrada en cada request.
 
-Configuración en:
+---
 
-src/config/nodemailer.ts
-✅ Validaciones
+## 📬 Sistema de Correos
 
-Centralizadas en:
+La API utiliza **Nodemailer** para gestionar procesos críticos:
 
-src/middlewares/validations.ts
+- Confirmación de cuenta mediante tokens únicos.
+- Recuperación de contraseñas olvidadas.
 
-Ejemplo:
+---
 
-check("email").isEmail().withMessage("Email inválido")
-🧠 Arquitectura
+## 📄 Licencia
 
-El proyecto sigue una arquitectura modular:
+Este proyecto está bajo la licencia **MIT**.
 
-Capa Responsabilidad
-Routes Definen endpoints
-Controllers Lógica de negocio
-Models Base de datos (Sequelize)
-Middlewares Validaciones y seguridad
-Helpers Funciones reutilizables
-📌 Buenas prácticas
-✔️ Uso de TypeScript
-✔️ Separación de responsabilidades
-✔️ Variables de entorno
-✔️ Código escalable
-✔️ Estructura modular
-📄 Licencia
+## ✍️ Autor
 
-MIT
+**Heymer Meza** - _Full Stack Developer_
 
-✍️ Autor
+---
 
-Heymer Meza
+### 🔥 Próximas Mejoras (Roadmap)
 
-🔥 Siguientes mejoras (opcional)
+- [ ] Implementación de Testing Unitario (Jest/Supertest).
+- [ ] Documentación de API con Swagger/OpenAPI.
+
+```
+
+```
