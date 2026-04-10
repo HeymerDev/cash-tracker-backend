@@ -59,4 +59,25 @@ describe("BudgetController.getAll", () => {
     expect(filteredBudgets).toHaveLength(0);
     expect(data).toEqual(filteredBudgets);
   });
+
+  test("should return 500 if there is an error", async () => {
+    const req = createRequest({
+      method: "GET",
+      url: "/api/budgets",
+      user: { id: 1 },
+    });
+
+    const res = createResponse();
+
+    const mockError = new Error("DB error");
+
+    (Budget.findAll as jest.Mock).mockRejectedValue(mockError);
+
+    await BudgetController.getAll(req, res);
+
+    expect(res.statusCode).toBe(500);
+    expect(res._getJSONData()).toStrictEqual({
+      message: "Error fetching budget entries",
+    });
+  });
 });
