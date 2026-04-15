@@ -130,6 +130,10 @@ describe("BudgetController.create", () => {
   test("should return 500 if there is an error", async () => {
     const mockError = new Error("DB error");
 
+    const mockBudgetInstance = {
+      save: jest.fn(),
+    };
+
     (Budget.create as jest.Mock).mockRejectedValue(mockError);
 
     const req = createRequest({
@@ -150,5 +154,7 @@ describe("BudgetController.create", () => {
       error: mockError.message,
       message: "Error creating budget entries",
     });
+    expect(Budget.create).toHaveBeenCalledWith(req.body);
+    expect(mockBudgetInstance.save).toHaveBeenCalledTimes(0);
   });
 });
