@@ -2,9 +2,11 @@ import { createResponse, createRequest } from "node-mocks-http";
 import { budgets } from "../../mocks/controllers/budget";
 import { BudgetController } from "../../../controllers/BudgetController";
 import Budget from "../../../models/Budget";
+import { create } from "domain";
 
 jest.mock("../../../models/Budget.ts", () => ({
   findAll: jest.fn(),
+  create: jest.fn(),
 }));
 
 describe("BudgetController.getAll", () => {
@@ -78,6 +80,47 @@ describe("BudgetController.getAll", () => {
     expect(res.statusCode).toBe(500);
     expect(res._getJSONData()).toStrictEqual({
       message: "Error fetching budget entries",
+    });
+  });
+});
+
+describe("BudgetController.create", () => {
+  test("should create a new budget entry", async () => {
+    const mockBudgetData = {
+      id: 3,
+      name: "Nuevo Presupuesto",
+      amount: 500,
+      userId: 1,
+      createdAt: Date.now().toString(),
+      updatedAt: Date.now().toString(),
+    };
+
+    const mockBudgetInstance = {
+      ...mockBudgetData,
+      save: jest.fn().mockResolvedValue(true),
+    };
+
+    (Budget.create as jest.Mock).mockResolvedValue(mockBudgetInstance);
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/budgets",
+      user: { id: 1 },
+      body: {
+        name: "Nuevo Presupuesto",
+        amount: 500,
+      },
+    });
+
+    const res = createResponse();
+
+    await BudgetController.create(req, res);
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(201);
+    expect(data).toEqual({
+      message: "Budget entry created successfully",
+      budget: mockBudgetData, // Ahora sí coincidirá
     });
   });
 });
