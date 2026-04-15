@@ -3,6 +3,7 @@ import { budgets } from "../../mocks/controllers/budget";
 import { BudgetController } from "../../../controllers/BudgetController";
 import Budget from "../../../models/Budget";
 import { create } from "domain";
+import { error } from "console";
 
 jest.mock("../../../models/Budget.ts", () => ({
   findAll: jest.fn(),
@@ -120,7 +121,34 @@ describe("BudgetController.create", () => {
     expect(res.statusCode).toBe(201);
     expect(data).toEqual({
       message: "Budget entry created successfully",
-      budget: mockBudgetData, // Ahora sí coincidirá
+      budget: mockBudgetData,
+    });
+    expect(Budget.create).toHaveBeenCalledWith(req.body);
+    expect(mockBudgetInstance.save).toHaveBeenCalledTimes(1);
+  });
+
+  test("should return 500 if there is an error", async () => {
+    const mockError = new Error("DB error");
+
+    (Budget.create as jest.Mock).mockRejectedValue(mockError);
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/budgets",
+      user: { id: 1 },
+      body: {
+        name: "Nuevo Presupuesto",
+        amount: 500,
+      },
+    });
+    const res = createResponse();
+
+    await BudgetController.create(req, res);
+
+    expect(res.statusCode).toBe(500);
+    expect(res._getJSONData()).toStrictEqual({
+      error: mockError.message,
+      message: "Error creating budget entries",
     });
   });
 });

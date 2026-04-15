@@ -24,7 +24,10 @@ export class BudgetController {
         .status(201)
         .json({ message: "Budget entry created successfully", budget });
     } catch (error) {
-      res.status(500).json({ message: "Error fetching budget entries", error });
+      res.status(500).json({
+        message: "Error creating budget entries",
+        error: error.message,
+      });
     }
   };
 
