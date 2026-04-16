@@ -8,6 +8,7 @@ import { error } from "console";
 jest.mock("../../../models/Budget.ts", () => ({
   findAll: jest.fn(),
   create: jest.fn(),
+  findByPk: jest.fn(),
 }));
 
 describe("BudgetController.getAll", () => {
@@ -156,5 +157,35 @@ describe("BudgetController.create", () => {
     });
     expect(Budget.create).toHaveBeenCalledWith(req.body);
     expect(mockBudgetInstance.save).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe("BudgetController.getById", () => {
+  beforeEach(() => {
+    (Budget.findByPk as jest.Mock).mockReset();
+    (Budget.findByPk as jest.Mock).mockImplementation((id, include) => {
+      const budget = budgets.find((b) => b.id === id)[0];
+      return Promise.resolve(budget);
+    });
+  });
+
+  test("should return a budget entry by ID", async () => {
+    const req = createRequest({
+      method: "GET",
+      url: "/api/budgets/1",
+      budget: {
+        id: 1,
+      },
+    });
+
+    const res = createResponse();
+    await BudgetController.getById(req, res);
+
+    const data = res._getJSONData();
+
+    console.log(data);
+
+    expect(res.statusCode).toBe(200);
+    expect(data).toEqual(budgets[0]);
   });
 });
