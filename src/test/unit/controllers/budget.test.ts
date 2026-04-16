@@ -162,9 +162,8 @@ describe("BudgetController.create", () => {
 
 describe("BudgetController.getById", () => {
   beforeEach(() => {
-    (Budget.findByPk as jest.Mock).mockReset();
     (Budget.findByPk as jest.Mock).mockImplementation((id, include) => {
-      const budget = budgets.find((b) => b.id === id)[0];
+      const budget = budgets.find((b) => b.id === id);
       return Promise.resolve(budget);
     });
   });
@@ -187,5 +186,9 @@ describe("BudgetController.getById", () => {
 
     expect(res.statusCode).toBe(200);
     expect(data).toEqual(budgets[0]);
+    expect(Budget.findByPk).toHaveBeenCalledWith(req.budget.id, {
+      include: expect.any(Array),
+    });
+    expect(data.expenses).toHaveLength(3);
   });
 });
