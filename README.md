@@ -1,10 +1,3 @@
-Esta es una excelente estructura para un archivo `README.md` profesional. He organizado la información utilizando una jerarquía clara, resaltando las tecnologías y manteniendo el tono técnico y limpio que requiere un proyecto de **Node.js + TypeScript**.
-
-Aquí tienes el código en formato Markdown:
-
----
-
-````markdown
 # 📦 API REST - Express + Sequelize + TypeScript
 
 Una API REST robusta construida con **Express**, **Sequelize** y **TypeScript**. Este proyecto implementa estándares modernos de seguridad, incluyendo autenticación JWT, encriptación de datos, validaciones estrictas y un sistema de notificaciones por correo electrónico.
