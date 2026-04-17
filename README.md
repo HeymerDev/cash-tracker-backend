@@ -46,7 +46,6 @@ src/
 ├── index.ts          # Punto de entrada de la aplicación
 └── .env              # Variables de entorno (no trackeado)
 ```
-````
 
 ---
 
