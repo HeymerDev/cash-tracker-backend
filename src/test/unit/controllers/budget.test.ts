@@ -171,7 +171,7 @@ describe("BudgetController.getById", () => {
   test("should return a budget entry by ID", async () => {
     const req = createRequest({
       method: "GET",
-      url: "/api/budgets/1",
+      url: "/api/budgets/:budgetId",
       budget: {
         id: 1,
       },
@@ -190,5 +190,32 @@ describe("BudgetController.getById", () => {
       include: expect.any(Array),
     });
     expect(data.expenses).toHaveLength(3);
+  });
+});
+
+describe("BudgetController.update", () => {
+  test("should update a budget entry", async () => {
+    const mockBudgetInstance = {
+      update: jest.fn().mockResolvedValue(true),
+    };
+
+    const req = createRequest({
+      method: "PATCH",
+      url: "/api/budgets/:budgetId",
+      budget: mockBudgetInstance,
+      body: {
+        name: "Updated Budget",
+        amount: 1500,
+      },
+    });
+    const res = createResponse();
+
+    await BudgetController.update(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toStrictEqual({
+      message: "Budget entry updated successfully",
+    });
+    expect(mockBudgetInstance.update).toHaveBeenCalledWith(req.body);
   });
 });
