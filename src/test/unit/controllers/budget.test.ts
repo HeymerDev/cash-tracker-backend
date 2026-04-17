@@ -219,3 +219,26 @@ describe("BudgetController.update", () => {
     expect(mockBudgetInstance.update).toHaveBeenCalledWith(req.body);
   });
 });
+
+describe("BudgetController.delete", () => {
+  test("should delete a budget entry", async () => {
+    const mockBudgetInstance = {
+      destroy: jest.fn().mockResolvedValue(true),
+    };
+
+    const req = createRequest({
+      method: "DELETE",
+      url: "/api/budgets/:budgetId",
+      budget: mockBudgetInstance,
+    });
+    const res = createResponse();
+
+    await BudgetController.delete(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toStrictEqual({
+      message: "Budget entry deleted successfully",
+    });
+    expect(mockBudgetInstance.destroy).toHaveBeenCalledTimes(1);
+  });
+});
