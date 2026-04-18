@@ -2,8 +2,6 @@ import { createResponse, createRequest } from "node-mocks-http";
 import { budgets } from "../../mocks/controllers/budget";
 import { BudgetController } from "../../../controllers/BudgetController";
 import Budget from "../../../models/Budget";
-import { create } from "domain";
-import { error } from "console";
 
 jest.mock("../../../models/Budget.ts", () => ({
   findAll: jest.fn(),
@@ -35,8 +33,6 @@ describe("BudgetController.getAll", () => {
 
     const data = res._getJSONData();
 
-    console.log(data);
-
     expect(res.statusCode).toBe(200);
     expect(data).toHaveLength(2);
   });
@@ -56,8 +52,6 @@ describe("BudgetController.getAll", () => {
     await BudgetController.getAll(req, res);
 
     const data = res._getJSONData();
-
-    console.log(data);
 
     expect(res.statusCode).toBe(200);
     expect(filteredBudgets).toHaveLength(0);
@@ -181,8 +175,6 @@ describe("BudgetController.getById", () => {
     await BudgetController.getById(req, res);
 
     const data = res._getJSONData();
-
-    console.log(data);
 
     expect(res.statusCode).toBe(200);
     expect(data).toEqual(budgets[0]);
