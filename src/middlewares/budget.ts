@@ -63,11 +63,13 @@ export const validateBudgetExists = async (
       return res.status(404).json({ message: "Budget entry not found" });
     }
     req.budget = budget;
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching budget entry", error });
-  }
 
-  next();
+    next();
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching budget entry", error: error.message });
+  }
 };
 
 export const hasAccess = async (
