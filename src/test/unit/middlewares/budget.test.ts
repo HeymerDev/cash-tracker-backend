@@ -1,5 +1,5 @@
 import { createResponse, createRequest } from "node-mocks-http";
-import { validateBudgetExists } from "../../../middlewares/budget";
+import { hasAccess, validateBudgetExists } from "../../../middlewares/budget";
 import Budget from "../../../models/Budget";
 import { budgets } from "../../mocks/controllers/budget";
 
@@ -58,5 +58,20 @@ describe("validateBudgetExists", () => {
       error: error.message,
     });
     expect(next).not.toHaveBeenCalled();
+  });
+});
+
+describe("hasAccess", () => {
+  test("should call next if user has access to budget", async () => {
+    const req = createRequest({
+      budget: budgets[0],
+      user: { id: 1 },
+    });
+
+    const res = createResponse();
+    const next = jest.fn();
+    await hasAccess(req, res, next);
+    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledTimes(1);
   });
 });
