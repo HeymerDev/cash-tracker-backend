@@ -6,7 +6,7 @@ export class ExpenseController {
 
   static create = async (req: Request, res: Response) => {
     try {
-      const expense = new Expense(req.body);
+      const expense = await Expense.create(req.body);
       expense.budgetId = req.budget.id;
       await expense.save();
       res
@@ -15,7 +15,12 @@ export class ExpenseController {
     } catch (error) {
       //console.log(error);
 
-      res.status(500).json({ message: "Error creating expense entry", error });
+      res
+        .status(500)
+        .json({
+          message: "Error creating expense entry",
+          error: error.message,
+        });
     }
   };
 
