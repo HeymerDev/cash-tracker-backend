@@ -1,6 +1,7 @@
 import { createRequest, createResponse } from "node-mocks-http";
 import { ExpenseController } from "../../../controllers/ExpenseController";
 import Expense from "../../../models/Expense";
+import { expenses } from "../../mocks/controllers/expense";
 
 jest.mock("../../../models/Expense", () => ({
   create: jest.fn(),
@@ -60,5 +61,20 @@ describe("Expense Controller Create", () => {
     });
     expect(Expense.create).toHaveBeenCalledWith(req.body);
     expect(expenseMock.save).not.toHaveBeenCalled();
+  });
+});
+
+describe("Expense Controller getById", () => {
+  test("should return the expense entry", async () => {
+    const req = createRequest({
+      method: "GET",
+      url: "/api/budget/:budgetId/expenses/:expenseId",
+      expense: expenses[0],
+    });
+    const res = createResponse();
+    await ExpenseController.getById(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toStrictEqual(expenses[0]);
   });
 });
