@@ -2,6 +2,7 @@ import { createRequest, createResponse } from "node-mocks-http";
 import { ExpenseController } from "../../../controllers/ExpenseController";
 import Expense from "../../../models/Expense";
 import { expenses } from "../../mocks/controllers/expense";
+import e from "express";
 
 jest.mock("../../../models/Expense", () => ({
   create: jest.fn(),
@@ -76,5 +77,33 @@ describe("Expense Controller getById", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toStrictEqual(expenses[0]);
+  });
+});
+
+describe("Expense Controller update", () => {
+  test("should update the expense entry", async () => {
+    const expenseMock = {
+      ...expenses[0],
+      update: jest.fn().mockResolvedValue(true),
+    };
+
+    const req = createRequest({
+      method: "PATCH",
+      url: "/api/budget/:budgetId/expenses/:expenseId",
+      expense: expenseMock,
+      body: {
+        name: "Limosina",
+        amount: 300,
+      },
+    });
+    const res = createResponse();
+    await ExpenseController.update(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toStrictEqual({
+      message: "Expense entry updated successfully",
+    });
+    expect(expenseMock.update).toHaveBeenCalledWith(req.body);
+    expect(expenseMock.update).toHaveBeenCalledTimes(1);
   });
 });
