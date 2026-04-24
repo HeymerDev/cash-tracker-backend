@@ -106,4 +106,27 @@ describe("Expense Controller update", () => {
     expect(expenseMock.update).toHaveBeenCalledWith(req.body);
     expect(expenseMock.update).toHaveBeenCalledTimes(1);
   });
+
+  test("should destroy the expense entry", async () => {
+    const expenseMock = {
+      ...expenses[0],
+      destroy: jest.fn().mockResolvedValue(true),
+    };
+
+    const req = createRequest({
+      method: "DELETE",
+      url: "/api/budget/:budgetId/expenses/:expenseId",
+      expense: expenseMock,
+    });
+    const res = createResponse();
+    await ExpenseController.delete(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toStrictEqual({
+      message: "Expense entry deleted successfully",
+    });
+    expect(expenseMock.destroy).toHaveBeenCalled();
+    expect(expenseMock.destroy).not.toHaveBeenCalledWith(req.body);
+    expect(expenseMock.destroy).toHaveBeenCalledTimes(1);
+  });
 });
