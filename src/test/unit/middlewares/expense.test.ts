@@ -10,13 +10,12 @@ jest.mock("../../../models/Expense", () => ({
 describe("Expense Middleware validateExpenseExists", () => {
   beforeEach(() => {
     (Expense.findByPk as jest.Mock).mockImplementation((id) => {
-      const expense = expenses.find((e) => e.id === parseInt(id))[0] ?? null;
+      const expense = expenses.find((e) => e.id === parseInt(id)) ?? null;
       return Promise.resolve(expense);
     });
   });
 
   test("should return 404 if expense does not exist", async () => {
-    (Expense.findByPk as jest.Mock).mockResolvedValue(null);
     const req = createRequest({
       method: "GET",
       url: "/api/budget/:budgetId/expenses/:expenseId",
@@ -32,5 +31,20 @@ describe("Expense Middleware validateExpenseExists", () => {
       message: "Expense entry not found",
     });
     expect(next).not.toHaveBeenCalled();
+  });
+
+  test("should call next if expense exists", async () => {
+    const req = createRequest({
+      method: "GET",
+      url: "/api/budget/:budgetId/expenses/:expenseId",
+      params: { expenseId: "1" },
+    });
+    const res = createResponse();
+    const next = jest.fn();
+    await validateExpenseExists(req, res, next);
+
+    expect(Expense.findByPk).toHaveBeenCalledWith("1");
+    expect(next).toHaveBeenCalled();
+    expect(req.expense).toEqual(expenses[0]);
   });
 });
