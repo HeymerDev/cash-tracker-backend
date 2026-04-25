@@ -62,9 +62,10 @@ export const validateExpenseExists = async (
       return res.status(404).json({ message: "Expense entry not found" });
     }
     req.expense = expense;
+    next();
   } catch (error) {
-    res.status(500).json({ message: "Error fetching expense entry", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching expense entry", error: error.message });
   }
-
-  next();
 };

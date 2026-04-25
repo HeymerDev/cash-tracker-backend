@@ -47,4 +47,26 @@ describe("Expense Middleware validateExpenseExists", () => {
     expect(next).toHaveBeenCalled();
     expect(req.expense).toEqual(expenses[0]);
   });
+
+  test("should catch error and return error 500", async () => {
+    const error = new Error("Database error");
+    (Expense.findByPk as jest.Mock).mockRejectedValue(error);
+    const req = createRequest({
+      method: "GET",
+      url: "/api/budget/:budgetId/expenses/:expenseId",
+      params: { expenseId: "1" },
+    });
+    const res = createResponse();
+    const next = jest.fn();
+    await validateExpenseExists(req, res, next);
+
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(500);
+    expect(next).not.toHaveBeenCalled();
+    expect(data).toEqual({
+      message: "Error fetching expense entry",
+      error: error.message,
+    });
+  });
 });
