@@ -73,8 +73,17 @@ describe(" AutthController.register", () => {
       message: "User registered successfully",
     });
     expect(User.create).toHaveBeenCalledTimes(1);
+    expect(User.create).toHaveBeenCalledWith(req.body);
+    expect(userMock.save).toHaveBeenCalledTimes(1);
+    expect(userMock.password).toBe("hashedPassword");
+    expect(userMock.token).toBe("123456");
     expect(hashPassword).toHaveBeenCalledWith("password123");
     expect(generateToken).toHaveBeenCalledTimes(1);
     expect(AuthEmail.sendVerificationEmail).toHaveBeenCalledTimes(1);
+    expect(AuthEmail.sendVerificationEmail).toHaveBeenCalledWith({
+      email: req.body.email,
+      name: req.body.name,
+      token: userMock.token,
+    });
   });
 });
