@@ -14,6 +14,10 @@ jest.mock("../../../helpers/auth");
 jest.mock("../../../helpers/token");
 
 describe(" AutthController.register", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("should return 409 if email is already in use", async () => {
     (User.findOne as jest.Mock).mockResolvedValue(true);
 
