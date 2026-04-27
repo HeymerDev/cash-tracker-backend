@@ -3,6 +3,7 @@ import { AuthController } from "../../../controllers/AuthController";
 import User from "../../../models/User";
 import { hashPassword } from "../../../helpers/auth";
 import { generateToken } from "../../../helpers/token";
+import { AuthEmail } from "../../../Emails/AuthEmail";
 
 jest.mock("../../../models/User", () => ({
   findOne: jest.fn(),
@@ -37,7 +38,7 @@ describe(" AutthController.register", () => {
   });
 
   test("should return 201 if user is registered successfully", async () => {
-    (User.findOne as jest.Mock).mockResolvedValue(true);
+    (User.findOne as jest.Mock).mockResolvedValue(null);
 
     const req = createRequest({
       method: "POST",
@@ -57,7 +58,19 @@ describe(" AutthController.register", () => {
     (User.create as jest.Mock).mockResolvedValue(userMock);
     (hashPassword as jest.Mock).mockResolvedValue("hashedPassword");
     (generateToken as jest.Mock).mockReturnValue("123456");
+    jest
+      .spyOn(AuthEmail, "sendVerificationEmail")
+      .mockImplementation(() => Promise.resolve());
 
     await AuthController.register(req, res);
+
+    expect(res.statusCode).toBe(201);
+    expect(res._getJSONData()).toEqual({
+      message: "User registered successfully",
+    });
+    expect(User.create).toHaveBeenCalledTimes(1);
+    expect(hashPassword).toHaveBeenCalledWith("password123");
+    expect(generateToken).toHaveBeenCalledTimes(1);
+    expect(AuthEmail.sendVerificationEmail).toHaveBeenCalledTimes(1);
   });
 });
