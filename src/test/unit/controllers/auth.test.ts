@@ -13,11 +13,11 @@ jest.mock("../../../models/User", () => ({
 jest.mock("../../../helpers/auth");
 jest.mock("../../../helpers/token");
 
-describe(" AutthController.register", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
+describe(" AutthController.register", () => {
   test("should return 409 if email is already in use", async () => {
     (User.findOne as jest.Mock).mockResolvedValue(true);
 
@@ -138,5 +138,32 @@ describe(" AutthController.login", () => {
         email: "test@example.com",
       },
     });
+  });
+
+  test("should return 403 if email isn't verified", async () => {
+    (User.findOne as jest.Mock).mockResolvedValue({
+      id: 1,
+      email: "test@example.com",
+      password: "hashedPassword",
+      confirm: false,
+    });
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/auth/login",
+      body: {
+        email: "test@example.com",
+        password: "password123",
+      },
+    });
+    const res = createResponse();
+
+    await AuthController.login(req, res);
+
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(403);
+    expect(data).toEqual({ message: "Please verify your email" });
+    expect(User.findOne).toHaveBeenCalledTimes(1);
   });
 });
