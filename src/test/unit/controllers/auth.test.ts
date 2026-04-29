@@ -86,4 +86,28 @@ describe(" AutthController.register", () => {
       token: userMock.token,
     });
   });
+
+  test("should return 500 if there is an error during registration", async () => {
+    (User.findOne as jest.Mock).mockResolvedValue(null);
+    (User.create as jest.Mock).mockRejectedValue(new Error("Database error"));
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/auth/register",
+      body: {
+        email: "test@example.com",
+        password: "password123",
+        name: "Test User",
+      },
+    });
+    const res = createResponse();
+
+    await AuthController.register(req, res);
+
+    expect(res.statusCode).toBe(500);
+    expect(res._getJSONData()).toEqual({
+      message: "Error registering user",
+      error: "Database error",
+    });
+  });
 });
