@@ -14,7 +14,7 @@ jest.mock("../../../helpers/auth");
 jest.mock("../../../helpers/token");
 
 describe(" AutthController.register", () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
@@ -108,6 +108,35 @@ describe(" AutthController.register", () => {
     expect(res._getJSONData()).toEqual({
       message: "Error registering user",
       error: "Database error",
+    });
+  });
+});
+
+describe(" AutthController.login", () => {
+  test("should return 401 if email isn't already in use", async () => {
+    (User.findOne as jest.Mock).mockResolvedValue(null);
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/auth/login",
+      body: {
+        email: "test@example.com",
+        password: "password123",
+      },
+    });
+    const res = createResponse();
+
+    await AuthController.login(req, res);
+
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(401);
+    expect(data).toEqual({ message: "Invalid credentials" });
+    expect(User.findOne).toHaveBeenCalledTimes(1);
+    expect(User.findOne).toHaveBeenCalledWith({
+      where: {
+        email: "test@example.com",
+      },
     });
   });
 });
