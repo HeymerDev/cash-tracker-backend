@@ -1,7 +1,7 @@
 import { createRequest, createResponse } from "node-mocks-http";
 import { AuthController } from "../../../controllers/AuthController";
 import User from "../../../models/User";
-import { hashPassword } from "../../../helpers/auth";
+import { comparePassword, hashPassword } from "../../../helpers/auth";
 import { generateToken } from "../../../helpers/token";
 import { AuthEmail } from "../../../Emails/AuthEmail";
 
@@ -164,6 +164,35 @@ describe(" AutthController.login", () => {
 
     expect(res.statusCode).toBe(403);
     expect(data).toEqual({ message: "Please verify your email" });
+    expect(User.findOne).toHaveBeenCalledTimes(1);
+  });
+
+  test("should return 401 if password isn't correct", async () => {
+    (User.findOne as jest.Mock).mockResolvedValue({
+      id: 1,
+      email: "test@example.com",
+      password: "hashedPassword",
+      confirm: true,
+    });
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/auth/login",
+      body: {
+        email: "test@example.com",
+        password: "password123",
+      },
+    });
+    const res = createResponse();
+
+    (comparePassword as jest.Mock).mockResolvedValue(false);
+
+    await AuthController.login(req, res);
+
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(401);
+    expect(data).toEqual({ message: "Invalid credentials" });
     expect(User.findOne).toHaveBeenCalledTimes(1);
   });
 });
