@@ -4,6 +4,7 @@ import User from "../../../models/User";
 import { comparePassword, hashPassword } from "../../../helpers/auth";
 import { generateToken } from "../../../helpers/token";
 import { AuthEmail } from "../../../Emails/AuthEmail";
+import { generateJWT } from "../../../helpers/jwt";
 
 jest.mock("../../../models/User", () => ({
   findOne: jest.fn(),
@@ -12,6 +13,7 @@ jest.mock("../../../models/User", () => ({
 
 jest.mock("../../../helpers/auth");
 jest.mock("../../../helpers/token");
+jest.mock("../../../helpers/jwt");
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -168,12 +170,14 @@ describe(" AutthController.login", () => {
   });
 
   test("should return 401 if password isn't correct", async () => {
-    (User.findOne as jest.Mock).mockResolvedValue({
+    const userMock = {
       id: 1,
       email: "test@example.com",
       password: "hashedPassword",
       confirm: true,
-    });
+    };
+
+    (User.findOne as jest.Mock).mockResolvedValue(userMock);
 
     const req = createRequest({
       method: "POST",
@@ -194,5 +198,49 @@ describe(" AutthController.login", () => {
     expect(res.statusCode).toBe(401);
     expect(data).toEqual({ message: "Invalid credentials" });
     expect(User.findOne).toHaveBeenCalledTimes(1);
+    expect(comparePassword).toHaveBeenCalledTimes(1);
+    expect(comparePassword).toHaveBeenCalledWith(
+      req.body.password,
+      userMock.password,
+    );
+  });
+
+  test("should return 200 if login is successful", async () => {
+    const userMock = {
+      id: 1,
+      email: "test@example.com",
+      password: "hashedPassword",
+      confirm: true,
+    };
+
+    (User.findOne as jest.Mock).mockResolvedValue(userMock);
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/auth/login",
+      body: {
+        email: "test@example.com",
+        password: "hashedPassword",
+      },
+    });
+    const res = createResponse();
+
+    (comparePassword as jest.Mock).mockResolvedValue(true);
+    (generateJWT as jest.Mock).mockReturnValue("jwtToken");
+
+    await AuthController.login(req, res);
+
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(200);
+    expect(data).toEqual({ message: "Login successful", token: "jwtToken" });
+    expect(User.findOne).toHaveBeenCalledTimes(1);
+    expect(comparePassword).toHaveBeenCalledTimes(1);
+    expect(comparePassword).toHaveBeenCalledWith(
+      req.body.password,
+      userMock.password,
+    );
+    expect(generateJWT).toHaveBeenCalledTimes(1);
+    expect(generateJWT).toHaveBeenCalledWith(userMock.id);
   });
 });
