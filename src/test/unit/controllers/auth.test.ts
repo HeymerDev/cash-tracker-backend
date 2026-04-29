@@ -243,4 +243,27 @@ describe(" AutthController.login", () => {
     expect(generateJWT).toHaveBeenCalledTimes(1);
     expect(generateJWT).toHaveBeenCalledWith(userMock.id);
   });
+
+  test("should return 500 if an error occurs", async () => {
+    const error = new Error("Database error");
+
+    const req = createRequest({
+      method: "POST",
+      url: "/api/auth/login",
+      body: {
+        email: "test@example.com",
+        password: "hashedPassword",
+      },
+    });
+    const res = createResponse();
+
+    (comparePassword as jest.Mock).mockRejectedValue(error);
+
+    await AuthController.login(req, res);
+
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(500);
+    expect(data).toEqual({ message: "Error logging in", error: error.message });
+  });
 });

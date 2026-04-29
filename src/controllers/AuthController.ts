@@ -61,7 +61,9 @@ export class AuthController {
 
       res.status(200).json({ message: "Login successful", token });
     } catch (error) {
-      res.status(500).json({ message: "Error logging in", error });
+      res
+        .status(500)
+        .json({ message: "Error logging in", error: error.message });
     }
   };
 
