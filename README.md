@@ -42,6 +42,11 @@ src/
 │   ├── authRouter.ts
 │   ├── budgetRouter.ts
 │   └── index.ts
+|
+├── test/             # Testing To App
+│   ├── mocks
+│   ├── integration
+│   └── unit
 │
 ├── index.ts          # Punto de entrada de la aplicación
 └── .env              # Variables de entorno (no trackeado)
