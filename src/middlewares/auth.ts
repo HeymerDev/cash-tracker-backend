@@ -65,6 +65,7 @@ export const validateEmailBody = async (
 ) => {
   (await body("email")
     .isEmail()
+    .withMessage("Invalid email address")
     .notEmpty()
     .withMessage("Please provide a valid email")
     .run(req),

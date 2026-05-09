@@ -14,4 +14,20 @@ describe("Authentication - Register Account", () => {
     expect(response.body.errors).toHaveLength(4);
     expect(createAccountMock).not.toHaveBeenCalled();
   });
+
+  test("should validation email error if email is invalid", async () => {
+    const response = await request(server).post("/api/auth/register").send({
+      name: "John Doe",
+      email: "invalid-email",
+      password: "password123",
+    });
+
+    const createAccountMock = jest.spyOn(AuthController, "register");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0].msg).toBe("Invalid email address");
+    expect(createAccountMock).not.toHaveBeenCalled();
+  });
 });
