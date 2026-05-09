@@ -67,4 +67,16 @@ describe("Authentication - Register Account", () => {
     );
     expect(createAccountMock).not.toHaveBeenCalled();
   });
+
+  test("should status 200 for create account if all validations pass", async () => {
+    const response = await request(server).post("/api/auth/register").send({
+      name: "John Doe",
+      email: "john@examplew.com",
+      password: "password123",
+    });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("User registered successfully");
+  });
 });

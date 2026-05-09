@@ -19,8 +19,6 @@ export class AuthEmail {
                 <p>This token will expire in 10 minutes.</p>
           `,
     });
-
-    console.log("Verification email sent: %s", email.messageId);
   }
 
   static async sendForgotPasswordEmail(user: User) {
@@ -35,6 +33,5 @@ export class AuthEmail {
                 <p>This token will expire in 10 minutes.</p>
           `,
     });
-    console.log("Forgot password email sent: %s", email.messageId);
   }
 }
