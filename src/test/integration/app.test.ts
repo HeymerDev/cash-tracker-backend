@@ -48,4 +48,23 @@ describe("Authentication - Register Account", () => {
     );
     expect(createAccountMock).not.toHaveBeenCalled();
   });
+
+  test("should validation password & email errors if both are invalid", async () => {
+    const response = await request(server).post("/api/auth/register").send({
+      name: "John Doe",
+      email: "invalid-email",
+      password: "short",
+    });
+
+    const createAccountMock = jest.spyOn(AuthController, "register");
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(2);
+    expect(response.body.errors[0].msg).toBe("Invalid email address");
+    expect(response.body.errors[1].msg).toBe(
+      "Password must be at least 8 characters long",
+    );
+    expect(createAccountMock).not.toHaveBeenCalled();
+  });
 });
