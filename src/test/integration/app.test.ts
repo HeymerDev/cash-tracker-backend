@@ -68,15 +68,28 @@ describe("Authentication - Register Account", () => {
     expect(createAccountMock).not.toHaveBeenCalled();
   });
 
-  test("should status 200 for create account if all validations pass", async () => {
+  test("should status 201 for create account if all validations pass", async () => {
     const response = await request(server).post("/api/auth/register").send({
       name: "John Doe",
-      email: "john@examplew.com",
+      email: "john@example.com",
       password: "password123",
     });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("User registered successfully");
+  });
+
+  test("should status 409 for create account if email already exists", async () => {
+    const response = await request(server).post("/api/auth/register").send({
+      name: "John Doe",
+      email: "john@example.com",
+      password: "password123",
+    });
+
+    expect(response.status).toBe(409);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body).not.toHaveProperty("errors");
+    expect(response.body.message).toBe("Email already in use");
   });
 });
