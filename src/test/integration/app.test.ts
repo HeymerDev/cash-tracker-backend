@@ -105,4 +105,14 @@ describe("Authentication - Confirmation Token Account", () => {
     expect(respose.body.errors).toHaveLength(1);
     expect(respose.body.errors[0].msg).toEqual("Token is not valid");
   });
+
+  test("should dispaly error if token not exists", async () => {
+    const respose = await request(server).post("/api/auth/verify-email").send({
+      token: "123456",
+    });
+
+    expect(respose.status).toBe(404);
+    expect(respose.body).toHaveProperty("message");
+    expect(respose.body.message).toEqual("Invalid token");
+  });
 });
