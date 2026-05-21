@@ -93,3 +93,16 @@ describe("Authentication - Register Account", () => {
     expect(response.body.message).toBe("Email already in use");
   });
 });
+
+describe("Authentication - Confirmation Token Account", () => {
+  test("should dispaly error if token is empty or not valid", async () => {
+    const respose = await request(server)
+      .post("/api/auth/verify-email")
+      .send({});
+
+    expect(respose.status).toBe(400);
+    expect(respose.body).toHaveProperty("errors");
+    expect(respose.body.errors).toHaveLength(1);
+    expect(respose.body.errors[0].msg).toEqual("Token is not valid");
+  });
+});
