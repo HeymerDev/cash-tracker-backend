@@ -95,7 +95,7 @@ describe("Authentication - Register Account", () => {
 });
 
 describe("Authentication - Confirmation Token Account", () => {
-  test("should dispaly error if token is empty or not valid", async () => {
+  test("should display error if token is empty or not valid", async () => {
     const respose = await request(server)
       .post("/api/auth/verify-email")
       .send({});
@@ -106,7 +106,7 @@ describe("Authentication - Confirmation Token Account", () => {
     expect(respose.body.errors[0].msg).toEqual("Token is not valid");
   });
 
-  test("should dispaly error if token not exists", async () => {
+  test("should display error if token not exists", async () => {
     const respose = await request(server).post("/api/auth/verify-email").send({
       token: "123456",
     });
@@ -114,5 +114,15 @@ describe("Authentication - Confirmation Token Account", () => {
     expect(respose.status).toBe(404);
     expect(respose.body).toHaveProperty("message");
     expect(respose.body.message).toEqual("Invalid token");
+  });
+
+  test("should display succes messagge if verify email correct", async () => {
+    const respose = await request(server).post("/api/auth/verify-email").send({
+      token: globalThis.cashTrackerConfirmationToken,
+    });
+
+    expect(respose.status).toBe(200);
+    expect(respose.body).toHaveProperty("message");
+    expect(respose.body.message).toEqual("Email verified successfully");
   });
 });
