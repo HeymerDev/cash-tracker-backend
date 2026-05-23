@@ -126,3 +126,13 @@ describe("Authentication - Confirmation Token Account", () => {
     expect(respose.body.message).toEqual("Email verified successfully");
   });
 });
+
+describe("Authentication - Login", () => {
+  test("Should display validation errors if body is empty", async () => {
+    const response = await request(server).post("/api/auth/login").send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(3);
+  });
+});
