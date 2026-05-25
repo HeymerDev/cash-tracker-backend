@@ -2,6 +2,7 @@ import request from "supertest";
 import server from "../../server";
 
 import { AuthController } from "../../controllers/AuthController";
+import User from "../../models/User";
 
 describe("Authentication - Register Account", () => {
   test("should validation errors form is not empty", async () => {
@@ -157,5 +158,23 @@ describe("Authentication - Login", () => {
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("Invalid credentials");
+  });
+
+  test("Should return 403 for user email not confirmed", async () => {
+    (jest.spyOn(User, "findOne") as jest.Mock).mockResolvedValue({
+      id: 1,
+      confirm: false,
+      email: "jhon@example.com",
+      password: "hashedpassword",
+    });
+
+    const response = await request(server).post("/api/auth/login").send({
+      email: "john@example.com",
+      password: "password123",
+    });
+
+    expect(response.status).toBe(403);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Please verify your email");
   });
 });
