@@ -188,9 +188,13 @@ describe("Authentication - Login", () => {
       password: "hashedpassword",
     });
 
-    jest.spyOn(authUtils, "comparePassword").mockResolvedValue(true);
+    const comparePasswordSpy = jest
+      .spyOn(authUtils, "comparePassword")
+      .mockResolvedValue(true);
 
-    jest.spyOn(jwtUtils, "generateJWT").mockReturnValue("fake-jwt-token");
+    const generateJWTSpy = jest
+      .spyOn(jwtUtils, "generateJWT")
+      .mockReturnValue("fake-jwt-token");
 
     const response = await request(server).post("/api/auth/login").send({
       email: "john@example.com",
@@ -198,6 +202,13 @@ describe("Authentication - Login", () => {
     });
 
     expect(response.status).toBe(200);
+    expect(comparePasswordSpy).toHaveBeenCalledTimes(1);
+    expect(comparePasswordSpy).toHaveBeenCalledWith(
+      "password123",
+      "hashedpassword",
+    );
+    expect(generateJWTSpy).toHaveBeenCalledTimes(1);
+    expect(generateJWTSpy).toHaveBeenCalledWith(1);
     expect(response.body).toHaveProperty("message");
     expect(response.body).toHaveProperty("token");
     expect(response.body.message).toBe("Login successful");
