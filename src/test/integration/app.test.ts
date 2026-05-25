@@ -135,4 +135,16 @@ describe("Authentication - Login", () => {
     expect(response.body).toHaveProperty("errors");
     expect(response.body.errors).toHaveLength(3);
   });
+
+  test("Should return 400 for email no valid format", async () => {
+    const response = await request(server).post("/api/auth/login").send({
+      email: "heymertest.com",
+      password: "wrongpassword",
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0].msg).toBe("Invalid email address");
+  });
 });
