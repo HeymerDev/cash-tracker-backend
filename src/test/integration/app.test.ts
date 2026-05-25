@@ -147,4 +147,15 @@ describe("Authentication - Login", () => {
     expect(response.body.errors).toHaveLength(1);
     expect(response.body.errors[0].msg).toBe("Invalid email address");
   });
+
+  test("Should return 401 for invalid credentials", async () => {
+    const response = await request(server).post("/api/auth/login").send({
+      email: "john@example.com",
+      password: "wrongpassword",
+    });
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Invalid credentials");
+  });
 });
