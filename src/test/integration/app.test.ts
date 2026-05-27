@@ -215,3 +215,12 @@ describe("Authentication - Login", () => {
     expect(response.body.token).toBe("fake-jwt-token");
   });
 });
+
+describe("Budgets - getBudgets", () => {
+  test("should reject unauthenticated access to budget without a jwt", async () => {
+    const response = await request(server).get("/api/budgets");
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
