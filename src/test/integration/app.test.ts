@@ -263,3 +263,19 @@ describe("Budgets - getBudgets", () => {
     expect(response.status).not.toBe(401);
   });
 });
+
+describe("Budgets - postBudgets", () => {
+  beforeAll(async () => {
+    await authenticateUser();
+  });
+
+  test("should reject unauthenticated access to create budget without a jwt", async () => {
+    const response = await request(server).post("/api/budgets").send({
+      name: "PC",
+      amount: 2500,
+    });
+
+    expect(response.status).toBe(401);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
