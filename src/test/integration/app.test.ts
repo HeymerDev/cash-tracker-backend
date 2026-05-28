@@ -239,6 +239,17 @@ describe("Budgets - getBudgets", () => {
     expect(response.body.message).toBe("Unauthorized");
   });
 
+  test("should reject unauthenticated access to budget with invalid jwt", async () => {
+    const response = await request(server)
+      .get("/api/budgets")
+      .auth("invalid-token", {
+        type: "bearer",
+      });
+
+    expect(response.status).toBe(500);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+
   test("should allow uthenticated access to budget with a valid jwt", async () => {
     const response = await request(server).get("/api/budgets").auth(jwt, {
       type: "bearer",
