@@ -278,4 +278,15 @@ describe("Budgets - postBudgets", () => {
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Unauthorized");
   });
+
+  test("should display validation when the form is empty ", async () => {
+    const response = await request(server)
+      .post("/api/budgets")
+      .auth(jwt, { type: "bearer" })
+      .send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(5);
+  });
 });
