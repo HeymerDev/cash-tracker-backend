@@ -238,4 +238,14 @@ describe("Budgets - getBudgets", () => {
     expect(response.status).toBe(401);
     expect(response.body.message).toBe("Unauthorized");
   });
+
+  test("should allow uthenticated access to budget with a valid jwt", async () => {
+    const response = await request(server).get("/api/budgets").auth(jwt, {
+      type: "bearer",
+    });
+
+    expect(response.body).toHaveLength(0);
+    expect(response.status).toBe(200);
+    expect(response.status).not.toBe(401);
+  });
 });
