@@ -216,20 +216,23 @@ describe("Authentication - Login", () => {
   });
 });
 
-describe("Budgets - getBudgets", () => {
-  let jwt: string;
+let jwt: string;
+async function authenticateUser() {
+  const response = await request(server).post("/api/auth/login").send({
+    email: "john@example.com",
+    password: "password123",
+  });
+  jwt = response.body.token;
+  expect(response.status).toBe(200);
+}
 
+describe("Budgets - getBudgets", () => {
   beforeAll(() => {
     jest.restoreAllMocks();
   });
 
   beforeAll(async () => {
-    const response = await request(server).post("/api/auth/login").send({
-      email: "john@example.com",
-      password: "password123",
-    });
-    jwt = response.body.token;
-    expect(response.status).toBe(200);
+    await authenticateUser();
   });
 
   test("should reject unauthenticated access to budget without a jwt", async () => {
