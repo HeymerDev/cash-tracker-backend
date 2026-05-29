@@ -29,6 +29,9 @@ src/
 │   └── nodemailer.ts
 │
 ├── controllers/      # Lógica de negocio (Controladores)
+│   ├── AuthController.ts
+│   ├── BudgetController.ts
+│   └── ExpenseController.ts
 │
 ├── Emails/           # Plantillas y manejo de correos (AuthEmail.ts)
 │
@@ -40,15 +43,15 @@ src/
 │
 ├── routes/           # Definición de Endpoints
 │   ├── authRouter.ts
-│   ├── budgetRouter.ts
-│   └── index.ts
+│   └── budgetRouter.ts
 |
 ├── test/             # Testing To App
 │   ├── mocks
 │   ├── integration
 │   └── unit
 │
-├── index.ts          # Punto de entrada de la aplicación
+├── index.ts
+├── server.ts          # Punto de entrada de la aplicación
 └── .env              # Variables de entorno (no trackeado)
 ```
 
