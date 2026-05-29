@@ -294,7 +294,7 @@ describe("Budgets - postBudgets", () => {
     expect(response.body.message).toBe("Unauthorized");
   });
 
-  test("should display validation when the form is empty ", async () => {
+  test("should display validation when the form is empty", async () => {
     const response = await request(server)
       .post("/api/budgets")
       .auth(jwt, { type: "bearer" })
@@ -303,5 +303,20 @@ describe("Budgets - postBudgets", () => {
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("errors");
     expect(response.body.errors).toHaveLength(5);
+  });
+
+  test("should 201 if create new budget is successfull", async () => {
+    const response = await request(server)
+      .post("/api/budgets")
+      .auth(jwt, { type: "bearer" })
+      .send({
+        name: "PC",
+        amount: 2500,
+      });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body).toHaveProperty("budget");
+    expect(response.body.message).toBe("Budget entry created successfully");
   });
 });
