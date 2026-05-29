@@ -345,4 +345,14 @@ describe("Budget - getBudgetById", () => {
     expect(response.body.errors[0]).toHaveProperty("msg");
     expect(response.body.errors[0].msg).toBe("Invalid ID format");
   });
+
+  test("should return 404 if budget entry nos exists", async () => {
+    const response = await request(server)
+      .get("/api/budgets/4")
+      .auth(jwt, { type: "bearer" });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Budget entry not found");
+  });
 });
