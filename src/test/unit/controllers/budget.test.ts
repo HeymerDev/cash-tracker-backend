@@ -93,7 +93,6 @@ describe("BudgetController.create", () => {
 
     const mockBudgetInstance = {
       ...mockBudgetData,
-      save: jest.fn().mockResolvedValue(true),
     };
 
     (Budget.create as jest.Mock).mockResolvedValue(mockBudgetInstance);
@@ -118,15 +117,22 @@ describe("BudgetController.create", () => {
       message: "Budget entry created successfully",
       budget: mockBudgetData,
     });
-    expect(Budget.create).toHaveBeenCalledWith(req.body);
-    expect(mockBudgetInstance.save).toHaveBeenCalledTimes(1);
+    expect(Budget.create).toHaveBeenCalledWith({
+      ...req.body,
+      userId: mockBudgetData.userId,
+    });
   });
 
   test("should return 500 if there is an error", async () => {
     const mockError = new Error("DB error");
 
-    const mockBudgetInstance = {
-      save: jest.fn(),
+    const mockBudgetData = {
+      id: 3,
+      name: "Nuevo Presupuesto",
+      amount: 500,
+      userId: 1,
+      createdAt: Date.now().toString(),
+      updatedAt: Date.now().toString(),
     };
 
     (Budget.create as jest.Mock).mockRejectedValue(mockError);
@@ -149,8 +155,10 @@ describe("BudgetController.create", () => {
       error: mockError.message,
       message: "Error creating budget entries",
     });
-    expect(Budget.create).toHaveBeenCalledWith(req.body);
-    expect(mockBudgetInstance.save).toHaveBeenCalledTimes(0);
+    expect(Budget.create).toHaveBeenCalledWith({
+      ...req.body,
+      userId: mockBudgetData.userId,
+    });
   });
 });
 
