@@ -333,4 +333,16 @@ describe("Budget - getBudgetById", () => {
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("Unauthorized");
   });
+
+  test("should validations errors if id on params is not valid (<0 or text)", async () => {
+    const response = await request(server)
+      .get("/api/budgets/hola")
+      .auth(jwt, { type: "bearer" });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0]).toHaveProperty("msg");
+    expect(response.body.errors[0].msg).toBe("Invalid ID format");
+  });
 });
