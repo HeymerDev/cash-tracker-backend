@@ -279,6 +279,21 @@ describe("Budgets - postBudgets", () => {
     expect(response.body.message).toBe("Unauthorized");
   });
 
+  test("should reject unauthenticated access to create budget with invalid jwt", async () => {
+    const response = await request(server)
+      .post("/api/budgets")
+      .auth("invalid-token", {
+        type: "bearer",
+      })
+      .send({
+        name: "PC",
+        amount: 2500,
+      });
+
+    expect(response.status).toBe(500);
+    expect(response.body.message).toBe("Unauthorized");
+  });
+
   test("should display validation when the form is empty ", async () => {
     const response = await request(server)
       .post("/api/budgets")
