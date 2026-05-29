@@ -320,3 +320,17 @@ describe("Budgets - postBudgets", () => {
     expect(response.body.message).toBe("Budget entry created successfully");
   });
 });
+
+describe("Budget - getBudgetById", () => {
+  beforeAll(async () => {
+    await authenticateUser();
+  });
+
+  test("should reject unauthenticated get budget by id without a jwt", async () => {
+    const response = await request(server).get("/api/budgets/1");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
