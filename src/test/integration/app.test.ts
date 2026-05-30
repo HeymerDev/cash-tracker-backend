@@ -355,4 +355,13 @@ describe("Budget - getBudgetById", () => {
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("Budget entry not found");
   });
+
+  test("should return budget entry belongs to authenticate user", async () => {
+    const response = await request(server)
+      .get("/api/budgets/1")
+      .auth(jwt, { type: "bearer" });
+
+    expect(response.status).toBe(200);
+    expect(response.status).not.toBe(404);
+  });
 });
