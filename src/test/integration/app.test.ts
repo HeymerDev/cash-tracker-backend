@@ -378,4 +378,17 @@ describe("Budget - updateBudgetById", () => {
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("Unauthorized");
   });
+
+  test("should return 200 if update budget succesfull", async () => {
+    const response = await request(server)
+      .patch("/api/budgets/1")
+      .auth(jwt, {
+        type: "bearer",
+      })
+      .send({});
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Budget entry updated successfully");
+  });
 });
