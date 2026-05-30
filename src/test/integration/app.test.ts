@@ -392,3 +392,51 @@ describe("Budget - updateBudgetById", () => {
     expect(response.body.message).toBe("Budget entry updated successfully");
   });
 });
+
+describe("Budget - deleteBudgetById", () => {
+  beforeAll(async () => {
+    await authenticateUser();
+  });
+
+  test("should reject unauthenticated update budget by id without a jwt", async () => {
+    const response = await request(server).delete("/api/budgets/1");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Unauthorized");
+  });
+
+  test("should return 404 if budget entry does not exists", async () => {
+    const response = await request(server)
+      .patch("/api/budgets/3000")
+      .auth(jwt, {
+        type: "bearer",
+      });
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Budget entry not found");
+  });
+
+  test("should validations errors if id on params is not valid (<0 or text)", async () => {
+    const response = await request(server)
+      .delete("/api/budgets/hola")
+      .auth(jwt, { type: "bearer" });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0]).toHaveProperty("msg");
+    expect(response.body.errors[0].msg).toBe("Invalid ID format");
+  });
+
+  test("should return 200 if delete budget succesfull", async () => {
+    const response = await request(server).delete("/api/budgets/1").auth(jwt, {
+      type: "bearer",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Budget entry deleted successfully");
+  });
+});
