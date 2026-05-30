@@ -365,3 +365,17 @@ describe("Budget - getBudgetById", () => {
     expect(response.status).not.toBe(404);
   });
 });
+
+describe("Budget - updateBudgetById", () => {
+  beforeAll(async () => {
+    await authenticateUser();
+  });
+
+  test("should reject unauthenticated update budget by id without a jwt", async () => {
+    const response = await request(server).patch("/api/budgets/1");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Unauthorized");
+  });
+});
