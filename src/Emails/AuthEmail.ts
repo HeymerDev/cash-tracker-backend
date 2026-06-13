@@ -29,8 +29,8 @@ export class AuthEmail {
       html: `
               <h1>Welcome to Cash Tracker, ${user.name}!</h1>
                 <p>Please use the following token to reset your password:</p>
+                <a href="${process.env.FRONTEND_URL}/auth/new-password">Visit the following link to copy the token</a>
                 <h2>${user.token}</h2>
-                <p>This token will expire in 10 minutes.</p>
           `,
     });
   }
