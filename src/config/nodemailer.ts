@@ -5,11 +5,10 @@ dotenv.config();
 
 const config = () => {
   return {
-    host: process.env.NODEMAILER_HOST,
-    port: parseInt(process.env.NODEMAILER_PORT),
+    service: "gmail",
     auth: {
-      user: process.env.NODEMAILER_USER,
-      pass: process.env.NODEMAILER_PASS,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
     },
   };
 };
