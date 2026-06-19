@@ -79,7 +79,7 @@ export class AuthController {
     try {
       const user = await User.findOne({ where: { token } });
       if (!user) {
-        return res.status(404).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Invalid token" });
       }
 
       user.confirm = true;
