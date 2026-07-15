@@ -22,9 +22,7 @@ export class BudgetController {
         userId: req.user.id,
       });
 
-      res
-        .status(201)
-        .json({ message: "Budget entry created successfully", budget });
+      res.status(201).json({ message: "Budget entry created successfully" });
     } catch (error) {
       res.status(500).json({
         message: "Error creating budget entries",
