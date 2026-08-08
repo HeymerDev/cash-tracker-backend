@@ -6,21 +6,19 @@ export class ExpenseController {
 
   static create = async (req: Request, res: Response) => {
     try {
-      const expense = await Expense.create(req.body);
-      expense.budgetId = req.budget.id;
+      const expense = await Expense.create({
+        ...req.body,
+        budgetId: req.budget.id,
+      });
       await expense.save();
-      res
-        .status(201)
-        .json({ message: "Expense entry created successfully", expense });
+      res.status(201).json({ message: "Expense entry created successfully" });
     } catch (error) {
       //console.log(error);
 
-      res
-        .status(500)
-        .json({
-          message: "Error creating expense entry",
-          error: error.message,
-        });
+      res.status(500).json({
+        message: "Error creating expense entry",
+        error: error.message,
+      });
     }
   };
 
