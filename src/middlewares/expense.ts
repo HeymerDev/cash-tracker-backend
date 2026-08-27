@@ -69,3 +69,15 @@ export const validateExpenseExists = async (
       .json({ message: "Error fetching expense entry", error: error.message });
   }
 };
+
+export const belongsToBudget = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.budget.id !== req.expense.budgetId) {
+    return res.status(403).json({ message: "Invalid Action" });
+  }
+
+  next();
+};

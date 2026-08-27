@@ -10,6 +10,7 @@ import {
 } from "../middlewares/budget";
 import { ExpenseController } from "../controllers/ExpenseController";
 import {
+  belongsToBudget,
   validateExpenseExists,
   validateExpenseId,
   validationCreateExpense,
@@ -26,6 +27,7 @@ router.param("budgetId", hasAccess);
 
 router.param("expenseId", validateExpenseId);
 router.param("expenseId", validateExpenseExists);
+router.param("expenseId", belongsToBudget);
 
 router.get("/", BudgetController.getAll);
 router.post("/", validationBody, handleInputErrors, BudgetController.create);
