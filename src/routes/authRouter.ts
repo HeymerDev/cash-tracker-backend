@@ -64,6 +64,19 @@ router.post(
 
 router.get("/user", authenticate, AuthController.getUser);
 
+router.patch(
+  "/user",
+  authenticate,
+  body("name")
+    .isString()
+    .withMessage("Name must be a string")
+    .notEmpty()
+    .withMessage("Name is required"),
+  validateEmailBody,
+  handleInputErrors,
+  AuthController.updateUser,
+);
+
 router.post(
   "/update-password",
   authenticate,
