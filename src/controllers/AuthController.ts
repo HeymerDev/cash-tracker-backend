@@ -140,11 +140,35 @@ export class AuthController {
     user.tokenPassword = null;
     await user.save();
 
-    res.json({ message: "Password update succesfully" });
+    res.json({ message: "Password updated successfully" });
   };
 
   static getUser = async (req: Request, res: Response) => {
     res.json(req.user);
+  };
+
+  static updateUser = async (req: Request, res: Response) => {
+    const { name, email } = req.body;
+
+    const user = await User.findByPk(req.user?.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const emailExists = await User.findOne({ where: { email } });
+    if (emailExists && emailExists.id !== user.id) {
+      return res.status(409).json({ message: "Email already in use" });
+    } else if (emailExists && emailExists.id === user.id) {
+      user.name = name;
+      await user.save();
+      return res.status(200).json({ message: "User updated successfully" });
+    }
+
+    user.name = name;
+    user.email = email;
+    await user.save();
+
+    res.status(200).json({ message: "User updated successfully" });
   };
 
   static updatePassword = async (req: Request, res: Response) => {
