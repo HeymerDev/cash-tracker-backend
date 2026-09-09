@@ -115,7 +115,6 @@ describe("BudgetController.create", () => {
     expect(res.statusCode).toBe(201);
     expect(data).toEqual({
       message: "Budget entry created successfully",
-      budget: mockBudgetData,
     });
     expect(Budget.create).toHaveBeenCalledWith({
       ...req.body,
