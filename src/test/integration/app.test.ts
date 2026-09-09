@@ -249,7 +249,7 @@ describe("Budgets - getBudgets", () => {
         type: "bearer",
       });
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(401);
     expect(response.body.message).toBe("Unauthorized");
   });
 
@@ -290,7 +290,7 @@ describe("Budgets - postBudgets", () => {
         amount: 2500,
       });
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(401);
     expect(response.body.message).toBe("Unauthorized");
   });
 
