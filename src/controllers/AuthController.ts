@@ -95,10 +95,15 @@ export class AuthController {
   static forgotPassword = async (req: Request, res: Response) => {
     const { email } = req.body;
 
+    // La misma respuesta exista o no la cuenta, para que no se pueda
+    // averiguar qué correos están registrados.
+    const genericMessage =
+      "If an account exists with that email, we've sent password reset instructions";
+
     try {
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(200).json({ message: genericMessage });
       }
       user.tokenPassword = generateToken();
       await user.save();
@@ -107,7 +112,7 @@ export class AuthController {
         name: user.name,
         token: user.tokenPassword,
       });
-      res.status(200).json({ message: "Forgot password email sent" });
+      res.status(200).json({ message: genericMessage });
     } catch (error) {
       res.status(500).json({ message: "Error processing request", error });
     }
