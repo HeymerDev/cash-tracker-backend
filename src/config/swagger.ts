@@ -15,7 +15,7 @@ const tags = [
     name: "Auth",
     description:
       "Registro, verificación de cuenta, login y gestión del perfil del usuario. " +
-      "Todas las rutas bajo `/api/auth` están protegidas por un rate limit de 5 peticiones por minuto por IP.",
+      "Todas las rutas bajo `/api/auth` están protegidas por un rate limit por IP: 5 peticiones por minuto en producción, 20 fuera de ella.",
   },
   {
     name: "Budgets",
@@ -335,18 +335,16 @@ const responses: JsonObject = {
     },
   },
   Unauthorized: {
-    description:
-      "Falta la cabecera `Authorization` o no contiene un token después de `Bearer`.",
-    content: {
-      "application/json": {
-        schema: { $ref: "#/components/schemas/MessageResponse" },
-        example: { message: "Unauthorized" },
-      },
-    },
-  },
-  InvalidToken: {
-    description:
-      "El JWT es inválido o expiró. El middleware `authenticate` responde 500 (no 401) en este caso.",
+    description: [
+      "No se pudo autenticar la petición. Ocurre cuando:",
+      "",
+      "- falta la cabecera `Authorization` o no trae un token después de `Bearer`;",
+      "- el JWT es inválido, fue manipulado o expiró;",
+      "- el JWT es válido pero su contenido no incluye un `userId`;",
+      "- la cuenta asociada al token ya no existe.",
+      "",
+      "En todos los casos la respuesta es la misma, para no dar pistas sobre la causa.",
+    ].join("\n"),
     content: {
       "application/json": {
         schema: { $ref: "#/components/schemas/MessageResponse" },
@@ -356,7 +354,7 @@ const responses: JsonObject = {
   },
   RateLimited: {
     description:
-      "Se superó el límite de 5 peticiones por minuto por IP en las rutas de `/api/auth`.",
+      "Se superó el límite de peticiones por minuto por IP en las rutas de `/api/auth` (5 en producción, 20 fuera de ella).",
     content: {
       "application/json": {
         schema: { $ref: "#/components/schemas/MessageResponse" },
@@ -557,21 +555,17 @@ const authPaths: JsonObject = {
       tags: ["Auth"],
       summary: "Solicitar el restablecimiento de contraseña",
       description:
-        "Genera un token de 6 dígitos y lo envía por correo. " +
-        "Nota: responde 404 si el correo no está registrado, lo que permite enumerar cuentas.",
+        "Si el correo corresponde a una cuenta, genera un token de 6 dígitos y lo envía por correo. " +
+        "La respuesta es idéntica exista o no la cuenta, para que no se pueda averiguar qué correos están registrados.",
       operationId: "forgotPassword",
       security: [],
       requestBody: jsonBody("EmailRequest"),
       responses: {
         "200": messageResponse(
-          "Correo de recuperación enviado.",
-          "Forgot password email sent",
+          "Petición procesada. No indica si la cuenta existe ni si se envió un correo.",
+          "If an account exists with that email, we've sent password reset instructions",
         ),
         "400": { $ref: "#/components/responses/ValidationError" },
-        "404": messageResponse(
-          "No existe una cuenta con ese correo.",
-          "User not found",
-        ),
         "429": { $ref: "#/components/responses/RateLimited" },
         "500": { $ref: "#/components/responses/ServerError" },
       },
@@ -649,7 +643,6 @@ const authPaths: JsonObject = {
         },
         "401": { $ref: "#/components/responses/Unauthorized" },
         "429": { $ref: "#/components/responses/RateLimited" },
-        "500": { $ref: "#/components/responses/InvalidToken" },
       },
     },
     patch: {
@@ -675,7 +668,6 @@ const authPaths: JsonObject = {
           "Email already in use",
         ),
         "429": { $ref: "#/components/responses/RateLimited" },
-        "500": { $ref: "#/components/responses/InvalidToken" },
       },
     },
   },
@@ -971,7 +963,7 @@ export const swaggerSpec: JsonObject = {
       "",
       "## Rate limiting",
       "",
-      "Todas las rutas bajo `/api/auth` permiten 5 peticiones por minuto por IP.",
+      "Todas las rutas bajo `/api/auth` permiten 5 peticiones por minuto por IP en producción y 20 en desarrollo.",
       "Al superarlo la API responde `429`.",
       "",
       "## Notas sobre las respuestas",
@@ -979,8 +971,8 @@ export const swaggerSpec: JsonObject = {
       "- Los montos (`amount`) viajan como **string** en las respuestas porque son columnas `DECIMAL`,",
       "  pero deben enviarse como **number** en los cuerpos de las peticiones.",
       "- Las operaciones de escritura devuelven `{ message }` y no el recurso creado o modificado.",
-      "- Un JWT inválido o expirado produce un `500` con `{ message: \"Unauthorized\" }`,",
-      "  mientras que la ausencia de la cabecera produce un `401`.",
+      "- Cualquier fallo de autenticación (cabecera ausente, token inválido o expirado, cuenta",
+      "  inexistente) devuelve siempre el mismo `401` con `{ message: \"Unauthorized\" }`.",
     ].join("\n"),
     license: {
       name: "MIT",
