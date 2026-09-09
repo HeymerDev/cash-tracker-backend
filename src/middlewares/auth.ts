@@ -19,28 +19,38 @@ export const authenticate = async (
   const bearer = req.headers.authorization;
 
   if (!bearer) {
-    const error = new Error("Unauthorized");
-    return res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   const [, token] = bearer.split(" ");
 
   if (!token) {
-    const error = new Error("Unauthorized");
-    return res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
     const decoded = decodedToken(token);
-    if (typeof decoded === "object" && decoded.userId) {
-      req.user = await User.findByPk(decoded.userId, {
-        attributes: ["id", "name", "email"],
-      });
 
-      next();
+    // Un token firmado pero sin userId no identifica a nadie.
+    if (typeof decoded !== "object" || !decoded.userId) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+
+    const user = await User.findByPk(decoded.userId, {
+      attributes: ["id", "name", "email"],
+    });
+
+    // El token es válido pero la cuenta ya no existe.
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    req.user = user;
+
+    next();
   } catch (error) {
-    return res.status(500).json({ message: "Unauthorized" });
+    // Token inválido, manipulado o expirado.
+    return res.status(401).json({ message: "Unauthorized" });
   }
 };
 
