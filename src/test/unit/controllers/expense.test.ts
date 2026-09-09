@@ -29,7 +29,10 @@ describe("Expense Controller Create", () => {
 
     await ExpenseController.create(req, res);
 
-    expect(Expense.create).toHaveBeenCalledWith(req.body);
+    expect(Expense.create).toHaveBeenCalledWith({
+      ...req.body,
+      budgetId: req.budget.id,
+    });
     expect(expenseMock.save).toHaveBeenCalled();
     expect(expenseMock.save).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toBe(201);
@@ -60,7 +63,10 @@ describe("Expense Controller Create", () => {
       error: mockError.message,
       message: "Error creating expense entry",
     });
-    expect(Expense.create).toHaveBeenCalledWith(req.body);
+    expect(Expense.create).toHaveBeenCalledWith({
+      ...req.body,
+      budgetId: req.budget.id,
+    });
     expect(expenseMock.save).not.toHaveBeenCalled();
   });
 });
