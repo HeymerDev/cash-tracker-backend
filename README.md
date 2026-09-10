@@ -140,7 +140,7 @@ Con el servidor levantado:
 pnpm run dev
 ```
 
-Abre **http://localhost:4000/api/docs**.
+Abre **http://localhost:4000/api/docs**. o **https://cash-tracker-backend-b5ku.onrender.com/api/docs/**
 
 Para probar los endpoints protegidos desde la UI: haz login, copia el `token` de la respuesta, pulsa el botón **Authorize** 🔓 y pégalo. La sesión se conserva entre recargas de la página (`persistAuthorization`).
 
